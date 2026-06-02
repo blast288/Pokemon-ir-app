@@ -7,343 +7,398 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#0d1117;
-  --bg2:#161b22;
-  --surface:rgba(255,255,255,0.04);
-  --surface2:rgba(255,255,255,0.07);
-  --border:rgba(255,255,255,0.08);
-  --gold:#f0c040;
-  --gold2:rgba(240,192,64,0.18);
-  --gold3:rgba(240,192,64,0.08);
-  --teal:#4ecdc4;
-  --teal2:rgba(78,205,196,0.15);
-  --electric:#ffe066;
-  --green:#56d364;
-  --green2:rgba(86,211,100,0.15);
+  /* Bellibolt palette */
+  --navy:#1a2744;
+  --navy2:#0f1a2e;
+  --olive:#4a4a1a;
+  --teal:#3ecfba;
+  --teal2:#2ab0a0;
+  --teal-glow:rgba(62,207,186,0.25);
+  --electric:#e8f060;
+  --electric2:#c8d840;
+  --electric-glow:rgba(232,240,96,0.3);
+  --gold:#f5c842;
+  --gold-glow:rgba(245,200,66,0.25);
+  --mint:#aaeedd;
+  --surface:rgba(255,255,255,0.06);
+  --surface2:rgba(255,255,255,0.1);
+  --border:rgba(62,207,186,0.18);
+  --border2:rgba(232,240,96,0.15);
+  --text:#e8f4f0;
+  --text2:rgba(232,244,240,0.6);
+  --text3:rgba(232,244,240,0.32);
+  --green:#56e87a;
   --red:#f85149;
-  --text:#e6edf3;
-  --text2:rgba(230,237,243,0.55);
-  --text3:rgba(230,237,243,0.28);
-  --radius:12px;
-  --shadow:0 8px 32px rgba(0,0,0,0.5);
+  --radius:13px;
 }
+
 body{
-  background:var(--bg);
+  background:var(--navy2);
   color:var(--text);
   font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
   min-height:100vh;
   overflow-x:hidden;
 }
 
-/* ── Animated background ── */
-body::before{
-  content:'';
-  position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:
-    radial-gradient(ellipse 80% 60% at 10% 0%,rgba(78,205,196,0.12) 0%,transparent 60%),
-    radial-gradient(ellipse 60% 80% at 90% 100%,rgba(240,192,64,0.1) 0%,transparent 60%),
-    radial-gradient(ellipse 40% 40% at 50% 50%,rgba(100,120,255,0.05) 0%,transparent 70%);
+/* ── Bellibolt sunray background ── */
+.bg-rays{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  overflow:hidden;
 }
-/* Lightning bolts in bg */
-body::after{
+.bg-rays::before{
   content:'';
-  position:fixed;inset:0;pointer-events:none;z-index:0;opacity:0.03;
-  background-image:
-    url("data:image/svg+xml,%3Csvg width='800' height='800' viewBox='0 0 800 800' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M200 50 L160 250 L220 250 L140 500 L210 500 L100 750' stroke='%23ffe066' stroke-width='3' fill='none'/%3E%3Cpath d='M600 100 L570 280 L620 280 L560 480 L620 480 L540 700' stroke='%23ffe066' stroke-width='2' fill='none'/%3E%3Cpath d='M400 0 L370 180 L420 180 L360 400' stroke='%23ffe066' stroke-width='2' fill='none'/%3E%3C/svg%3E");
-  background-size:800px 800px;
+  position:absolute;
+  /* Sun origin: bottom-left, like the card */
+  bottom:-20%;left:-10%;
+  width:200%;height:200%;
+  background:conic-gradient(
+    from 0deg at 15% 85%,
+    #1a2f50 0deg, #3a4a1a 10deg,
+    #1a2f50 20deg, #3a4a1a 30deg,
+    #1a2f50 40deg, #3a4a1a 50deg,
+    #1a2f50 60deg, #3a4a1a 70deg,
+    #1a2f50 80deg, #3a4a1a 90deg,
+    #1a2f50 100deg, #3a4a1a 110deg,
+    #1a2f50 120deg, #1a2f50 360deg
+  );
+  opacity:0.7;
+}
+/* Teal radial glow from bottom-left (where Bellibolt sits) */
+.bg-rays::after{
+  content:'';
+  position:absolute;
+  bottom:-5%;left:-5%;
+  width:70%;height:70%;
+  background:radial-gradient(ellipse at 20% 90%, rgba(62,207,186,0.18) 0%, transparent 65%);
 }
 
-/* ── Layout ── */
+/* Lightning bolts SVG overlay */
+.bg-lightning{
+  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.18;
+}
+
 #app{position:relative;z-index:1;max-width:1300px;margin:0 auto;padding:0 20px 80px}
 
 /* ── Header ── */
 header{
-  padding:28px 0 20px;
+  padding:24px 0 20px;
   display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
-  border-bottom:1px solid rgba(78,205,196,0.15);
+  border-bottom:1px solid rgba(232,240,96,0.2);
+  position:relative;
+}
+header::after{
+  content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,var(--teal),var(--electric),var(--teal));
+  opacity:0.4;
 }
 .logo{display:flex;align-items:center;gap:14px}
 .logo-icon{
-  width:44px;height:44px;border-radius:50%;
-  background:linear-gradient(135deg,var(--teal),var(--gold));
+  width:48px;height:48px;border-radius:50%;
+  background:linear-gradient(135deg,var(--teal),var(--electric));
   display:flex;align-items:center;justify-content:center;
-  font-size:22px;box-shadow:0 0 20px rgba(78,205,196,0.3);
+  font-size:24px;
+  box-shadow:0 0 24px var(--teal-glow), 0 0 48px rgba(62,207,186,0.1);
   flex-shrink:0;
+  animation:pulse-glow 3s ease-in-out infinite;
 }
-.logo-text h1{font-size:clamp(16px,2.5vw,24px);font-weight:700;color:var(--text);letter-spacing:-0.02em}
-.logo-text p{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:0.08em;text-transform:uppercase}
+@keyframes pulse-glow{
+  0%,100%{box-shadow:0 0 24px var(--teal-glow),0 0 48px rgba(62,207,186,0.1)}
+  50%{box-shadow:0 0 32px rgba(62,207,186,0.5),0 0 64px rgba(232,240,96,0.15)}
+}
+.logo-text h1{
+  font-size:clamp(18px,3vw,28px);font-weight:800;letter-spacing:-0.03em;
+  background:linear-gradient(90deg,var(--teal),var(--electric));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.logo-text p{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:0.1em;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 
-/* ── Nav tabs ── */
+/* ── Tabs ── */
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab{
-  background:transparent;border:1px solid var(--border);color:var(--text2);
-  padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer;
+  background:rgba(26,39,68,0.8);border:1px solid var(--border);color:var(--text2);
+  padding:9px 16px;border-radius:9px;font-size:13px;cursor:pointer;
   transition:all 0.2s;font-family:inherit;display:flex;align-items:center;gap:6px;
-  white-space:nowrap;
+  white-space:nowrap;backdrop-filter:blur(8px);
 }
-.tab:hover{background:var(--surface2);border-color:rgba(255,255,255,0.15);color:var(--text)}
-.tab.active{background:linear-gradient(135deg,rgba(78,205,196,0.15),rgba(240,192,64,0.1));border-color:var(--teal);color:var(--teal);font-weight:600}
-.tab-badge{background:var(--teal);color:#000;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:700}
-.tab-badge.gold{background:var(--gold);color:#000}
+.tab:hover{background:rgba(62,207,186,0.12);border-color:var(--teal);color:var(--teal)}
+.tab.active{
+  background:linear-gradient(135deg,rgba(62,207,186,0.2),rgba(232,240,96,0.12));
+  border-color:var(--electric);color:var(--electric);font-weight:700;
+  box-shadow:0 0 16px rgba(232,240,96,0.15),inset 0 0 20px rgba(232,240,96,0.05);
+}
+.tab-badge{background:var(--teal);color:#0f1a2e;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:800}
+.tab-badge.gold{background:var(--gold);color:#0f1a2e}
 
-/* ── Alert bell ── */
 .alert-btn{
-  position:relative;background:transparent;border:1px solid var(--border);
-  color:var(--text2);width:38px;height:38px;border-radius:8px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:16px;transition:all 0.2s;
+  position:relative;background:rgba(26,39,68,0.8);border:1px solid var(--border);
+  color:var(--text2);width:40px;height:40px;border-radius:9px;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:17px;
+  transition:all 0.2s;backdrop-filter:blur(8px);
 }
-.alert-btn:hover{background:var(--surface2);color:var(--text)}
-.alert-btn.has-alerts{border-color:var(--gold);color:var(--gold)}
-.alert-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 6px var(--gold)}
+.alert-btn:hover{background:rgba(62,207,186,0.12);border-color:var(--teal);color:var(--teal)}
+.alert-btn.has-alerts{border-color:var(--electric);color:var(--electric);box-shadow:0 0 12px var(--electric-glow)}
+.alert-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--electric);box-shadow:0 0 8px var(--electric)}
 
-/* ── Search + controls bar ── */
-.controls{
-  padding:18px 0 14px;
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-}
-.search-wrap{
-  position:relative;flex:1;min-width:180px;max-width:320px;
-}
+/* ── Controls ── */
+.controls{padding:20px 0 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.search-wrap{position:relative;flex:1;min-width:180px;max-width:300px}
 .search-wrap input{
-  width:100%;background:var(--surface2);border:1px solid var(--border);
-  color:var(--text);padding:9px 14px 9px 36px;border-radius:9px;font-size:13px;
-  outline:none;transition:border-color 0.2s;font-family:inherit;
+  width:100%;background:rgba(26,39,68,0.9);border:1px solid var(--border);
+  color:var(--text);padding:10px 14px 10px 38px;border-radius:10px;font-size:13px;
+  outline:none;transition:all 0.2s;font-family:inherit;backdrop-filter:blur(8px);
 }
-.search-wrap input:focus{border-color:var(--teal)}
+.search-wrap input:focus{border-color:var(--teal);box-shadow:0 0 12px var(--teal-glow)}
 .search-wrap input::placeholder{color:var(--text3)}
-.search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none}
+.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:14px;pointer-events:none}
 .search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0;display:none}
-
 select{
-  background:var(--surface2);border:1px solid var(--border);color:var(--text);
-  padding:9px 13px;border-radius:9px;font-size:13px;cursor:pointer;outline:none;
-  font-family:inherit;transition:border-color 0.2s;
+  background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text);
+  padding:10px 13px;border-radius:10px;font-size:13px;cursor:pointer;outline:none;
+  font-family:inherit;transition:all 0.2s;backdrop-filter:blur(8px);max-width:240px;
 }
-select:focus{border-color:var(--teal)}
-select option{background:#1c2128}
+select:focus{border-color:var(--teal);box-shadow:0 0 12px var(--teal-glow)}
+select option,select optgroup{background:#1a2744;color:var(--text)}
 .count-badge{
-  font-size:11px;color:var(--text3);margin-left:auto;
-  background:var(--surface);border:1px solid var(--border);
-  padding:4px 10px;border-radius:20px;
+  font-size:11px;color:var(--electric);margin-left:auto;
+  background:rgba(232,240,96,0.08);border:1px solid var(--border2);
+  padding:5px 12px;border-radius:20px;font-weight:600;letter-spacing:0.03em;
 }
+.sets-loading{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:7px}
+.sets-loading-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px var(--teal)}50%{opacity:0.3;box-shadow:none}}
 
-/* ── Grid ── */
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px}
+/* ── Card grid ── */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(162px,1fr));gap:13px}
 
-/* ── Card tile ── */
 .card-tile{
   border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;
-  border:1px solid var(--border);background:var(--surface);
-  transition:all 0.22s;animation:rise 0.2s ease both;
+  border:1px solid var(--border);background:rgba(15,26,46,0.85);
+  transition:all 0.22s;animation:rise 0.22s ease both;
+  backdrop-filter:blur(4px);
 }
 .card-tile:hover{
-  border-color:var(--teal);
-  transform:translateY(-5px) scale(1.02);
-  box-shadow:0 16px 40px rgba(0,0,0,0.6),0 0 20px rgba(78,205,196,0.1);
+  border-color:var(--electric);
+  transform:translateY(-6px) scale(1.03);
+  box-shadow:0 20px 50px rgba(0,0,0,0.7),0 0 30px var(--electric-glow);
 }
 .card-tile.is-collected{
-  filter:grayscale(70%) brightness(0.55);
-  border-color:rgba(86,211,100,0.3);
+  filter:grayscale(65%) brightness(0.5);
+  border-color:rgba(86,232,122,0.25);
 }
 .card-tile.is-collected:hover{
-  filter:grayscale(40%) brightness(0.75);
+  filter:grayscale(30%) brightness(0.75);
   border-color:var(--green);
+  box-shadow:0 20px 50px rgba(0,0,0,0.7),0 0 20px rgba(86,232,122,0.2);
 }
 .card-tile img{width:100%;display:block}
-.card-no-img{aspect-ratio:2.5/3.5;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3)}
-
-.card-info{padding:8px 10px 10px}
-.card-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-no-img{aspect-ratio:2.5/3.5;background:rgba(26,39,68,0.6);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3)}
+.card-info{padding:9px 11px 11px;background:linear-gradient(180deg,rgba(15,26,46,0) 0%,rgba(15,26,46,0.95) 100%)}
+.card-name{font-size:12px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .card-meta{font-size:10px;color:var(--text3);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.card-price{font-size:12px;font-weight:600;color:var(--gold);margin-top:5px;display:flex;align-items:center;gap:4px}
+.card-price{font-size:13px;font-weight:700;color:var(--electric);margin-top:5px;display:flex;align-items:center;gap:5px}
 .card-price a{color:inherit;text-decoration:none}
-.card-price a:hover{text-decoration:underline}
-.card-price.no-price{color:var(--text3);font-weight:400}
+.card-price a:hover{text-decoration:underline;color:var(--gold)}
+.card-price .price-label{font-size:9px;color:var(--text3);font-weight:400}
+.card-price.no-price{color:var(--text3);font-weight:400;font-size:12px}
 
-/* Card action buttons */
-.card-actions{position:absolute;top:6px;right:6px;display:flex;flex-direction:column;gap:4px;z-index:2}
+/* Action buttons */
+.card-actions{position:absolute;top:7px;right:7px;display:flex;flex-direction:column;gap:5px;z-index:2}
 .action-btn{
-  width:26px;height:26px;border-radius:50%;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:12px;
-  transition:transform 0.15s,box-shadow 0.15s;backdrop-filter:blur(6px);
+  width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;
+  display:flex;align-items:center;justify-content:center;font-size:13px;
+  transition:all 0.18s;backdrop-filter:blur(8px);
 }
-.action-btn:hover{transform:scale(1.18)}
-.fav-btn{background:rgba(0,0,0,0.6);color:rgba(240,192,64,0.75)}
-.fav-btn.active{background:var(--gold);color:#000;box-shadow:0 2px 10px rgba(240,192,64,0.5)}
-.collect-btn{background:rgba(0,0,0,0.6);color:rgba(86,211,100,0.6)}
-.collect-btn.active{background:var(--green);color:#000;box-shadow:0 2px 10px rgba(86,211,100,0.4)}
-
-/* Collected overlay badge */
+.action-btn:hover{transform:scale(1.2)}
+.fav-btn{background:rgba(0,0,0,0.65);color:rgba(245,200,66,0.7)}
+.fav-btn.active{background:var(--gold);color:#0f1a2e;box-shadow:0 0 14px var(--gold-glow)}
+.collect-btn{background:rgba(0,0,0,0.65);color:rgba(86,232,122,0.6)}
+.collect-btn.active{background:var(--green);color:#0f1a2e;box-shadow:0 0 14px rgba(86,232,122,0.4)}
 .collected-badge{
-  position:absolute;bottom:48px;left:50%;transform:translateX(-50%);
-  background:rgba(86,211,100,0.9);color:#000;font-size:9px;font-weight:700;
-  padding:2px 8px;border-radius:10px;white-space:nowrap;letter-spacing:0.05em;
-  pointer-events:none;
+  position:absolute;bottom:50px;left:50%;transform:translateX(-50%);
+  background:linear-gradient(90deg,var(--teal),var(--green));color:#0f1a2e;
+  font-size:9px;font-weight:800;padding:2px 10px;border-radius:10px;
+  white-space:nowrap;letter-spacing:0.06em;pointer-events:none;
+  box-shadow:0 2px 8px rgba(86,232,122,0.3);
 }
 
 /* ── Pagination ── */
-.pagination{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:40px}
+.pagination{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:44px}
 .pag-btn{
-  background:var(--surface2);border:1px solid var(--border);color:var(--text2);
-  padding:8px 16px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;
-  transition:all 0.15s;
+  background:rgba(26,39,68,0.8);border:1px solid var(--border);color:var(--text2);
+  padding:9px 18px;border-radius:9px;font-size:13px;cursor:pointer;font-family:inherit;
+  transition:all 0.18s;backdrop-filter:blur(8px);
 }
-.pag-btn:hover:not(:disabled){background:var(--teal2);border-color:var(--teal);color:var(--teal)}
-.pag-btn:disabled{opacity:0.3;cursor:default}
-.pag-info{font-size:12px;color:var(--text3);min-width:60px;text-align:center}
+.pag-btn:hover:not(:disabled){background:rgba(62,207,186,0.15);border-color:var(--teal);color:var(--teal);box-shadow:0 0 12px var(--teal-glow)}
+.pag-btn:disabled{opacity:0.25;cursor:default}
+.pag-info{font-size:13px;color:var(--text3);min-width:70px;text-align:center}
 
 /* ── States ── */
-.empty{text-align:center;padding:80px 0;color:var(--text3);font-size:14px}
-.error-box{padding:12px 16px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.25);border-radius:9px;margin-bottom:16px;font-size:13px;color:#f85149}
+.empty{text-align:center;padding:80px 0;color:var(--text3);font-size:15px}
+.error-box{padding:13px 17px;background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.3);border-radius:10px;margin-bottom:16px;font-size:13px;color:#f87070}
 .spinner{display:flex;justify-content:center;padding:70px 0}
-.spinner-ring{width:32px;height:32px;border:2px solid rgba(78,205,196,0.15);border-top-color:var(--teal);border-radius:50%;animation:spin 0.8s linear infinite}
-
-/* ── Wishlist / Collected views ── */
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:20px 0}
-.stat-card{
-  padding:14px 16px;border-radius:var(--radius);
-  border:1px solid var(--border);background:var(--surface);
-  position:relative;overflow:hidden;
+.spinner-ring{
+  width:36px;height:36px;
+  border:2px solid rgba(62,207,186,0.15);
+  border-top-color:var(--teal);
+  border-right-color:var(--electric);
+  border-radius:50%;animation:spin 0.7s linear infinite;
 }
-.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--gold))}
-.stat-label{font-size:9px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:6px}
-.stat-value{font-size:20px;font-weight:700;color:var(--gold)}
+
+/* ── Stats ── */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin:22px 0}
+.stat-card{
+  padding:15px 16px;border-radius:var(--radius);
+  border:1px solid var(--border);
+  background:rgba(15,26,46,0.85);
+  position:relative;overflow:hidden;backdrop-filter:blur(8px);
+}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--electric),var(--gold))}
+.stat-label{font-size:9px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:7px}
+.stat-value{font-size:22px;font-weight:800;color:var(--electric)}
 .stat-value.teal{color:var(--teal)}
 .stat-value.green{color:var(--green)}
-.stat-sub{font-size:9px;color:var(--text3);margin-top:3px}
-
+.stat-sub{font-size:9px;color:var(--text3);margin-top:4px}
 .progress-row{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:5px}
-.progress-bar{height:3px;background:rgba(255,255,255,0.06);border-radius:3px;margin-bottom:20px;overflow:hidden}
-.progress-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal),var(--green));transition:width 0.4s}
+.progress-bar{height:4px;background:rgba(255,255,255,0.06);border-radius:4px;margin-bottom:22px;overflow:hidden}
+.progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--green));transition:width 0.5s;box-shadow:0 0 8px rgba(86,232,122,0.4)}
 
-/* List rows */
-.list-rows{display:flex;flex-direction:column;gap:6px}
+/* ── List rows ── */
+.list-rows{display:flex;flex-direction:column;gap:7px}
 .list-row{
-  display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:9px;
-  border:1px solid var(--border);background:var(--surface);transition:all 0.15s;
+  display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:10px;
+  border:1px solid var(--border);background:rgba(15,26,46,0.8);
+  transition:all 0.18s;backdrop-filter:blur(4px);
 }
-.list-row:hover{background:var(--surface2);border-color:rgba(255,255,255,0.12)}
-.list-row.collected{border-color:rgba(86,211,100,0.2);background:rgba(86,211,100,0.04)}
-
+.list-row:hover{background:rgba(26,39,68,0.9);border-color:rgba(62,207,186,0.3)}
+.list-row.collected{border-color:rgba(86,232,122,0.2);background:rgba(86,232,122,0.04)}
 .check-btn{
-  width:20px;height:20px;border-radius:5px;flex-shrink:0;
-  border:1.5px solid rgba(255,255,255,0.18);background:transparent;
-  color:transparent;cursor:pointer;font-size:11px;
-  display:flex;align-items:center;justify-content:center;transition:all 0.15s;
+  width:22px;height:22px;border-radius:6px;flex-shrink:0;
+  border:1.5px solid rgba(255,255,255,0.2);background:transparent;
+  color:transparent;cursor:pointer;font-size:12px;
+  display:flex;align-items:center;justify-content:center;transition:all 0.18s;
 }
-.check-btn.checked{border-color:var(--green);background:rgba(86,211,100,0.2);color:var(--green)}
-
-.row-thumb{width:40px;border-radius:5px;cursor:pointer;flex-shrink:0;transition:transform 0.15s}
-.row-thumb:hover{transform:scale(1.08)}
+.check-btn.checked{border-color:var(--green);background:rgba(86,232,122,0.2);color:var(--green)}
+.row-thumb{width:42px;border-radius:6px;cursor:pointer;flex-shrink:0;transition:transform 0.18s}
+.row-thumb:hover{transform:scale(1.1)}
 .row-info{flex:1;min-width:0;cursor:pointer}
-.row-name{font-size:13px;color:var(--text);font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.list-row.collected .row-name{text-decoration:line-through;opacity:0.5}
+.row-name{font-size:13px;color:var(--text);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-row.collected .row-name{text-decoration:line-through;opacity:0.45}
 .row-meta{font-size:10px;color:var(--text3);margin-top:2px}
 .row-price{flex-shrink:0;text-align:right}
-.row-price-val{font-size:14px;color:var(--gold);font-weight:600}
+.row-price-val{font-size:14px;color:var(--electric);font-weight:700}
 .row-price-val a{color:inherit;text-decoration:none}
-.row-price-val a:hover{text-decoration:underline}
-.row-price-val.no-price{color:var(--text3);font-weight:400}
+.row-price-val a:hover{text-decoration:underline;color:var(--gold)}
+.row-price-val.no-price{color:var(--text3);font-weight:400;font-size:13px}
 .row-price-sub{font-size:9px;color:var(--text3);margin-top:1px;text-align:right}
-.remove-btn{background:transparent;border:none;color:rgba(248,81,73,0.4);cursor:pointer;font-size:17px;padding:2px 4px;opacity:0;transition:opacity 0.15s}
+.remove-btn{background:transparent;border:none;color:rgba(248,81,73,0.4);cursor:pointer;font-size:18px;padding:2px 5px;opacity:0;transition:opacity 0.15s}
 .list-row:hover .remove-btn{opacity:1}
-
-.list-note{margin-top:20px;font-size:10px;color:var(--text3);text-align:center}
-
+.list-note{margin-top:22px;font-size:10px;color:var(--text3);text-align:center}
 .wish-empty{text-align:center;padding:90px 0}
-.wish-empty-icon{font-size:48px;opacity:0.15;margin-bottom:10px}
-.wish-empty p{font-size:14px;color:var(--text3)}
-.wish-empty small{font-size:11px;color:rgba(230,237,243,0.18);display:block;margin-top:5px}
+.wish-empty-icon{font-size:52px;opacity:0.15;margin-bottom:12px}
+.wish-empty p{font-size:15px;color:var(--text3)}
+.wish-empty small{font-size:11px;color:rgba(232,244,240,0.18);display:block;margin-top:6px}
 
 /* ── Alerts tray ── */
 .alerts-tray{
-  position:fixed;top:70px;right:20px;width:320px;z-index:200;
-  background:#1c2128;border:1px solid rgba(240,192,64,0.3);border-radius:var(--radius);
-  box-shadow:0 16px 48px rgba(0,0,0,0.8);overflow:hidden;
-  animation:slideIn 0.2s ease;
-  max-height:80vh;overflow-y:auto;
+  position:fixed;top:76px;right:18px;width:320px;z-index:200;
+  background:#12203a;border:1px solid rgba(232,240,96,0.3);border-radius:var(--radius);
+  box-shadow:0 20px 60px rgba(0,0,0,0.85),0 0 30px rgba(232,240,96,0.08);
+  overflow:hidden;animation:slideIn 0.2s ease;max-height:80vh;overflow-y:auto;
 }
-.alerts-header{
-  padding:12px 16px;background:rgba(240,192,64,0.08);
-  border-bottom:1px solid rgba(240,192,64,0.15);
-  display:flex;justify-content:space-between;align-items:center;
-}
-.alerts-title{font-size:13px;font-weight:600;color:var(--gold);display:flex;align-items:center;gap:6px}
-.alerts-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:18px;padding:0 2px}
-.alert-item{
-  display:flex;align-items:center;gap:10px;padding:10px 14px;
-  border-bottom:1px solid var(--border);
-}
+.alerts-header{padding:13px 16px;background:rgba(232,240,96,0.07);border-bottom:1px solid rgba(232,240,96,0.15);display:flex;justify-content:space-between;align-items:center}
+.alerts-title{font-size:13px;font-weight:700;color:var(--electric);display:flex;align-items:center;gap:6px}
+.alerts-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:19px;padding:0 2px;line-height:1}
+.alert-item{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid var(--border)}
 .alert-item:last-child{border-bottom:none}
-.alert-thumb{width:36px;border-radius:4px;flex-shrink:0}
+.alert-thumb{width:38px;border-radius:5px;flex-shrink:0}
 .alert-info{flex:1;min-width:0}
 .alert-name{font-size:12px;font-weight:600;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.alert-msg{font-size:10px;color:var(--gold);margin-top:2px}
+.alert-msg{font-size:10px;color:var(--electric);margin-top:2px}
 .alert-prices{font-size:10px;color:var(--text3);margin-top:1px}
-.alerts-empty{padding:20px;text-align:center;font-size:13px;color:var(--text3)}
+.alerts-empty{padding:22px;text-align:center;font-size:13px;color:var(--text3)}
 
 /* ── Modal ── */
 .modal-overlay{
-  position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.88);
+  position:fixed;inset:0;z-index:150;background:rgba(10,18,35,0.93);
   display:flex;align-items:center;justify-content:center;
-  padding:20px;backdrop-filter:blur(10px);
+  padding:20px;backdrop-filter:blur(12px);
 }
 .modal-box{
-  background:#161b22;border:1px solid rgba(78,205,196,0.2);border-radius:16px;
-  max-width:680px;width:100%;display:flex;gap:22px;padding:24px;flex-wrap:wrap;
-  box-shadow:0 32px 100px rgba(0,0,0,0.9),0 0 40px rgba(78,205,196,0.05);
+  background:linear-gradient(160deg,#1a2f50 0%,#0f1a2e 100%);
+  border:1px solid rgba(62,207,186,0.25);border-radius:16px;
+  max-width:700px;width:100%;display:flex;gap:24px;padding:26px;flex-wrap:wrap;
+  box-shadow:0 40px 100px rgba(0,0,0,0.95),0 0 60px rgba(62,207,186,0.06);
   max-height:90vh;overflow-y:auto;
 }
-.modal-img{width:190px;border-radius:10px;flex-shrink:0;align-self:flex-start;box-shadow:var(--shadow)}
-.modal-body{flex:1;min-width:170px}
-.modal-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:14px}
-.modal-name{font-size:20px;font-weight:700;color:var(--text);line-height:1.2}
-.modal-sub{font-size:11px;color:var(--text3);margin-top:3px}
+.modal-img{width:200px;border-radius:12px;flex-shrink:0;align-self:flex-start;box-shadow:0 12px 40px rgba(0,0,0,0.7)}
+.modal-body{flex:1;min-width:175px}
+.modal-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:16px}
+.modal-name{
+  font-size:21px;font-weight:800;line-height:1.2;
+  background:linear-gradient(90deg,var(--text),var(--mint));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.modal-sub{font-size:11px;color:var(--text3);margin-top:4px}
 .modal-fav-btn{
-  background:var(--surface2);border:1px solid var(--border);color:var(--text2);
-  border-radius:7px;padding:6px 12px;cursor:pointer;font-size:12px;
-  flex-shrink:0;white-space:nowrap;font-family:inherit;transition:all 0.15s;
+  background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text2);
+  border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;
+  flex-shrink:0;white-space:nowrap;font-family:inherit;transition:all 0.18s;
 }
-.modal-fav-btn.active{background:var(--gold2);border-color:var(--gold);color:var(--gold)}
-
-.info-row{display:flex;gap:10px;margin-bottom:5px;font-size:12px}
-.info-label{color:var(--text3);width:74px;flex-shrink:0}
+.modal-fav-btn.active{background:rgba(245,200,66,0.15);border-color:var(--gold);color:var(--gold);box-shadow:0 0 12px var(--gold-glow)}
+.info-row{display:flex;gap:10px;margin-bottom:6px;font-size:12px}
+.info-label{color:var(--text3);width:76px;flex-shrink:0}
 .info-value{color:var(--text2)}
-
 .price-box{
-  margin-top:14px;padding:12px 14px;
-  background:rgba(240,192,64,0.05);border-radius:10px;border:1px solid rgba(240,192,64,0.12);
+  margin-top:16px;padding:14px;
+  background:rgba(232,240,96,0.04);border-radius:11px;border:1px solid rgba(232,240,96,0.12);
 }
-.price-box-title{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(240,192,64,0.5);margin-bottom:9px}
-.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
-.ps{padding:6px 8px;border-radius:7px;background:var(--surface)}
-.ps.hi{background:rgba(240,192,64,0.08);border:1px solid rgba(240,192,64,0.15)}
-.ps-label{font-size:9px;color:var(--text3);margin-bottom:2px}
-.ps-value{font-size:13px;color:var(--text2);font-weight:500}
-.ps.hi .ps-value{color:var(--gold);font-weight:700}
+.price-box-title{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(232,240,96,0.5);margin-bottom:10px}
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.ps{padding:8px 10px;border-radius:8px;background:rgba(26,39,68,0.8)}
+.ps.hi{background:rgba(232,240,96,0.07);border:1px solid rgba(232,240,96,0.15)}
+.ps-label{font-size:9px;color:var(--text3);margin-bottom:3px}
+.ps-value{font-size:14px;color:var(--text2);font-weight:600}
+.ps.hi .ps-value{color:var(--electric);font-weight:800}
 .ps-value a{color:inherit;text-decoration:none}
-.ps-value a:hover{text-decoration:underline}
-.price-note{margin-top:7px;font-size:9px;color:var(--text3)}
-
-.attacks-section{margin-top:12px}
-.section-title{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:6px}
-.attack{margin-bottom:5px;font-size:12px}
-.atk-name{color:var(--text);font-weight:600}
-.atk-dmg{margin-left:6px;color:var(--gold)}
-.atk-text{margin-top:1px;font-size:10px;color:var(--text3)}
-
-.modal-actions{margin-top:18px;display:flex;gap:8px;flex-wrap:wrap}
-.close-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:7px 16px;border-radius:7px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.15s}
-.close-btn:hover{background:var(--surface2);border-color:rgba(255,255,255,0.2);color:var(--text)}
-.cm-link{background:rgba(30,140,255,0.1);border:1px solid rgba(30,140,255,0.25);color:rgba(100,180,255,0.8);padding:7px 14px;border-radius:7px;font-size:13px;text-decoration:none;transition:all 0.15s}
-.cm-link:hover{background:rgba(30,140,255,0.18);color:rgba(140,200,255,0.95)}
+.ps-value a:hover{text-decoration:underline;color:var(--gold)}
+.price-note{margin-top:8px;font-size:9px;color:var(--text3)}
+.attacks-section{margin-top:14px}
+.section-title{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:7px}
+.attack{margin-bottom:7px;font-size:12px}
+.atk-name{color:var(--text);font-weight:700}
+.atk-dmg{margin-left:7px;color:var(--electric)}
+.atk-text{margin-top:2px;font-size:11px;color:var(--text3)}
+.modal-actions{margin-top:20px;display:flex;gap:9px;flex-wrap:wrap}
+.close-btn{
+  background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text2);
+  padding:8px 18px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.18s;
+}
+.close-btn:hover{border-color:var(--teal);color:var(--teal)}
+.cm-link{
+  background:rgba(62,207,186,0.1);border:1px solid rgba(62,207,186,0.3);color:var(--teal);
+  padding:8px 15px;border-radius:8px;font-size:13px;text-decoration:none;transition:all 0.18s;
+}
+.cm-link:hover{background:rgba(62,207,186,0.2);color:var(--mint)}
 
 @keyframes spin{to{transform:rotate(360deg)}}
-@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes slideIn{from{opacity:0;transform:translateX(10px)}to{opacity:1;transform:none}}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes slideIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
+
+<!-- Bellibolt-inspired sunray background -->
+<div class="bg-rays"></div>
+<svg class="bg-lightning" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <path d="M300 20 L260 200 L320 200 L230 450 L310 450 L160 820" stroke="#e8f060" stroke-width="2.5" fill="none" opacity="0.6"/>
+  <path d="M800 0 L770 160 L820 160 L760 340 L830 340 L750 560" stroke="#aaeedd" stroke-width="2" fill="none" opacity="0.5"/>
+  <path d="M1200 80 L1165 260 L1215 260 L1155 460 L1220 460 L1140 700" stroke="#e8f060" stroke-width="1.5" fill="none" opacity="0.4"/>
+  <path d="M500 100 L480 230 L510 230 L470 390" stroke="#aaeedd" stroke-width="1.5" fill="none" opacity="0.3"/>
+  <path d="M1050 200 L1030 330 L1060 330 L1020 500" stroke="#e8f060" stroke-width="1.5" fill="none" opacity="0.35"/>
+  <path d="M100 300 L80 420 L110 420 L70 580" stroke="#aaeedd" stroke-width="1" fill="none" opacity="0.25"/>
+</svg>
+
 <div id="app">
   <header>
     <div class="logo">
@@ -353,15 +408,14 @@ select option{background:#1c2128}
         <p>Pokémon Illustration Rares</p>
       </div>
     </div>
-    <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+    <div class="header-right">
       <div class="tabs">
         <button class="tab active" id="tab-browse" onclick="switchView('browse')">🃏 Bladeren</button>
         <button class="tab" id="tab-wishlist" onclick="switchView('wishlist')">♡ Wishlist <span class="tab-badge" id="fav-count" style="display:none">0</span></button>
         <button class="tab" id="tab-collected" onclick="switchView('collected')">✓ Verzameld <span class="tab-badge gold" id="coll-count" style="display:none">0</span></button>
       </div>
       <button class="alert-btn" id="alert-btn" onclick="toggleAlerts()" title="Prijsalerts">
-        🔔
-        <span class="alert-dot" id="alert-dot" style="display:none"></span>
+        🔔<span class="alert-dot" id="alert-dot" style="display:none"></span>
       </button>
     </div>
   </header>
@@ -375,32 +429,17 @@ select option{background:#1c2128}
     <div id="alerts-content"><div class="alerts-empty">Laden…</div></div>
   </div>
 
-  <!-- Browse view -->
+  <!-- Browse -->
   <div id="view-browse">
     <div class="controls">
       <div class="search-wrap">
         <span class="search-icon">🔍</span>
-        <input type="text" id="search-input" placeholder="Zoek op naam…" oninput="onSearch()" />
+        <input type="text" id="search-input" placeholder="Zoek op naam…" oninput="onSearch()"/>
         <button class="search-clear" id="search-clear" onclick="clearSearch()">×</button>
       </div>
-      <select id="set-select" onchange="onSetChange()">
-        <option value="all">Alle sets</option>
-        <option value="sv8pt5">Prismatic Evolutions</option>
-        <option value="sv8">Surging Sparks</option>
-        <option value="sv7">Stellar Crown</option>
-        <option value="sv6pt5">Shrouded Fable</option>
-        <option value="sv6">Twilight Masquerade</option>
-        <option value="sv5">Temporal Forces</option>
-        <option value="sv4pt5">Paldean Fates</option>
-        <option value="sv4">Paradox Rift</option>
-        <option value="sv3pt5">151</option>
-        <option value="sv3">Obsidian Flames</option>
-        <option value="sv2">Paldea Evolved</option>
-        <option value="sv1">Scarlet &amp; Violet</option>
-        <option value="swsh12pt5">Crown Zenith</option>
-        <option value="swsh12">Silver Tempest</option>
-        <option value="swsh11">Lost Origin</option>
-      </select>
+      <div id="set-select-wrap">
+        <div class="sets-loading"><span class="sets-loading-dot"></span> Sets laden…</div>
+      </div>
       <span class="count-badge" id="card-count" style="display:none"></span>
     </div>
     <div id="error-box" class="error-box" style="display:none"></div>
@@ -424,10 +463,7 @@ select option{background:#1c2128}
     <img class="modal-img" id="modal-img" src="" alt="" style="display:none"/>
     <div class="modal-body">
       <div class="modal-top">
-        <div>
-          <div class="modal-name" id="modal-name"></div>
-          <div class="modal-sub" id="modal-sub"></div>
-        </div>
+        <div><div class="modal-name" id="modal-name"></div><div class="modal-sub" id="modal-sub"></div></div>
         <button class="modal-fav-btn" id="modal-fav-btn" onclick="toggleModalFav()">♡ Wishlist</button>
       </div>
       <div id="modal-info"></div>
@@ -446,120 +482,91 @@ select option{background:#1c2128}
 </div>
 
 <script>
-// ── State ─────────────────────────────────────────────────────────
-const S = {
-  cards:[], page:1, totalPages:1, totalCount:0,
-  selectedSet:'all', search:'', searchTimer:null,
-  loading:false, favorites:{}, collected:{}, modalCard:null,
-  alertsOpen:false
-};
+const S={cards:[],page:1,totalPages:1,totalCount:0,selectedSet:'all',search:'',searchTimer:null,loading:false,favorites:{},collected:{},priceHistory:{},modalCard:null,alertsOpen:false};
 
-// ── Init ──────────────────────────────────────────────────────────
-async function init() {
-  await loadUserData();
-  updateBadges();
-  fetchCards();
-  checkAlerts();
+async function init(){await loadUserData();updateBadges();loadSets();fetchCards();checkAlerts();}
+
+async function loadSets(){
+  const wrap=document.getElementById('set-select-wrap');
+  try{
+    const r=await fetch('/api/sets');const sets=await r.json();
+    const groups={};
+    sets.forEach(s=>{const ser=s.series||'Overig';if(!groups[ser])groups[ser]=[];groups[ser].push(s);});
+    let html=`<select id="set-select" onchange="onSetChange()" style="max-width:260px"><option value="all">Alle sets (${sets.length} sets)</option>`;
+    const order=['Mega Evolution','Scarlet & Violet','Sword & Shield'];
+    const keys=[...order,...Object.keys(groups).filter(k=>!order.includes(k))];
+    keys.forEach(ser=>{
+      if(!groups[ser])return;
+      html+=`<optgroup label="── ${ser} ──">`;
+      groups[ser].forEach(s=>{html+=`<option value="${s.id}">${s.name} (${s.total} IR)</option>`;});
+      html+=`</optgroup>`;
+    });
+    html+='</select>';
+    wrap.innerHTML=html;
+  }catch(e){wrap.innerHTML='<select id="set-select" onchange="onSetChange()"><option value="all">Alle sets</option></select>';}
 }
 
-// ── User data ─────────────────────────────────────────────────────
-async function loadUserData() {
-  try { const r = await fetch('/api/userdata'); const d = await r.json(); S.favorites=d.favorites||{}; S.collected=d.collected||{}; S.priceHistory=d.priceHistory||{}; } catch{}
-}
-async function saveUserData() {
-  try { await fetch('/api/userdata',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({favorites:S.favorites,collected:S.collected,priceHistory:S.priceHistory||{}})}); } catch{}
-}
+async function loadUserData(){try{const r=await fetch('/api/userdata');const d=await r.json();S.favorites=d.favorites||{};S.collected=d.collected||{};S.priceHistory=d.priceHistory||{};}catch{}}
+async function saveUserData(){try{await fetch('/api/userdata',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({favorites:S.favorites,collected:S.collected,priceHistory:S.priceHistory})});}catch{}}
 
-// ── Alerts ────────────────────────────────────────────────────────
-async function checkAlerts() {
-  try {
-    const r = await fetch('/api/alerts');
-    const alerts = await r.json();
-    const dot = document.getElementById('alert-dot');
-    const btn = document.getElementById('alert-btn');
-    if (alerts.length > 0) { dot.style.display='block'; btn.classList.add('has-alerts'); }
-    else { dot.style.display='none'; btn.classList.remove('has-alerts'); }
+async function checkAlerts(){
+  try{
+    const r=await fetch('/api/alerts');const alerts=await r.json();
+    const dot=document.getElementById('alert-dot');const btn=document.getElementById('alert-btn');
+    if(alerts.length>0){dot.style.display='block';btn.classList.add('has-alerts');}
+    else{dot.style.display='none';btn.classList.remove('has-alerts');}
     renderAlerts(alerts);
-  } catch{}
+  }catch{}
+}
+function renderAlerts(alerts){
+  const el=document.getElementById('alerts-content');
+  if(!alerts.length){el.innerHTML='<div class="alerts-empty">Geen prijsalerts op dit moment</div>';return;}
+  el.innerHTML=alerts.map(a=>`<div class="alert-item">${a.cardImage?`<img class="alert-thumb" src="${a.cardImage}" alt="${esc(a.cardName)}"/>`:''}
+    <div class="alert-info"><div class="alert-name">${esc(a.cardName)}</div><div class="alert-msg">📉 ${a.dropPct}% onder lifetime gemiddelde</div>
+    <div class="alert-prices">Nu: €${a.currentPrice.toFixed(2)} · Gem: €${a.lifetimeAvg.toFixed(2)}</div></div>
+    ${a.cmUrl?`<a href="${a.cmUrl}" target="_blank" style="font-size:11px;color:var(--teal);text-decoration:none;flex-shrink:0">↗ CM</a>`:''}</div>`).join('');
+}
+function toggleAlerts(){const tray=document.getElementById('alerts-tray');S.alertsOpen=!S.alertsOpen;tray.style.display=S.alertsOpen?'block':'none';if(S.alertsOpen)checkAlerts();}
+
+async function fetchCards(){
+  if(S.loading)return;S.loading=true;setLoading(true);clearError();
+  try{
+    const r=await fetch(`/api/cards?set=${S.selectedSet}&page=${S.page}&pageSize=20&search=${encodeURIComponent(S.search)}`);
+    const data=await r.json();if(data.error)throw new Error(data.error);
+    S.cards=data.data||[];S.totalCount=data.totalCount||0;S.totalPages=Math.max(1,Math.ceil(S.totalCount/20));
+    renderGrid();renderPagination();
+  }catch(e){showError('Fout bij laden: '+e.message);}
+  finally{S.loading=false;setLoading(false);}
 }
 
-function renderAlerts(alerts) {
-  const el = document.getElementById('alerts-content');
-  if (!alerts.length) { el.innerHTML='<div class="alerts-empty">Geen prijsalerts op dit moment</div>'; return; }
-  el.innerHTML = alerts.map(a => `
-    <div class="alert-item">
-      ${a.cardImage ? `<img class="alert-thumb" src="${a.cardImage}" alt="${esc(a.cardName)}"/>` : ''}
-      <div class="alert-info">
-        <div class="alert-name">${esc(a.cardName)}</div>
-        <div class="alert-msg">📉 ${a.dropPct}% onder lifetime gemiddelde</div>
-        <div class="alert-prices">Nu: €${a.currentPrice.toFixed(2)} · Gem: €${a.lifetimeAvg.toFixed(2)}</div>
-      </div>
-      ${a.cmUrl ? `<a href="${a.cmUrl}" target="_blank" style="font-size:11px;color:rgba(100,180,255,0.8);text-decoration:none;flex-shrink:0">↗ CM</a>` : ''}
-    </div>`).join('');
-}
-
-function toggleAlerts() {
-  const tray = document.getElementById('alerts-tray');
-  S.alertsOpen = !S.alertsOpen;
-  tray.style.display = S.alertsOpen ? 'block' : 'none';
-  if (S.alertsOpen) checkAlerts();
-}
-
-// ── Fetch ─────────────────────────────────────────────────────────
-async function fetchCards() {
-  if (S.loading) return;
-  S.loading=true; setLoading(true); clearError();
-  try {
-    const url=`/api/cards?set=${S.selectedSet}&page=${S.page}&pageSize=20&search=${encodeURIComponent(S.search)}`;
-    const r=await fetch(url); const data=await r.json();
-    if(data.error) throw new Error(data.error);
-    S.cards=data.data||[]; S.totalCount=data.totalCount||0;
-    S.totalPages=Math.max(1,Math.ceil(S.totalCount/20));
-    renderGrid(); renderPagination();
-  } catch(e){ showError('Fout bij laden: '+e.message); }
-  finally{ S.loading=false; setLoading(false); }
-}
-
-// ── Render grid ───────────────────────────────────────────────────
-function renderGrid() {
-  const grid=document.getElementById('card-grid');
-  const empty=document.getElementById('empty-msg');
-  const countEl=document.getElementById('card-count');
-  if(S.totalCount>0){countEl.textContent=`${S.totalCount} kaarten`;countEl.style.display='inline';}
-  else countEl.style.display='none';
-
+function renderGrid(){
+  const grid=document.getElementById('card-grid');const empty=document.getElementById('empty-msg');const countEl=document.getElementById('card-count');
+  if(S.totalCount>0){countEl.textContent=`${S.totalCount} kaarten`;countEl.style.display='inline';}else countEl.style.display='none';
   if(!S.cards.length){grid.innerHTML='';empty.style.display='block';return;}
   empty.style.display='none';
-
   grid.innerHTML=S.cards.map((card,i)=>{
-    const img=card.images?.small||'';
-    const isFav=!!S.favorites[card.id];
-    const isColl=!!S.collected[card.id];
-    const price=getTrendPrice(card);
-    const cmUrl=card.cardmarket?.url||'';
-    return `
-    <div class="card-tile${isColl?' is-collected':''}" style="animation-delay:${i*18}ms" onclick="openModal('${card.id}')">
+    const img=card.images?.small||'';const isFav=!!S.favorites[card.id];const isColl=!!S.collected[card.id];
+    const price=getTrendPrice(card);const cmUrl=card.cardmarket?.url||'';
+    return `<div class="card-tile${isColl?' is-collected':''}" style="animation-delay:${i*16}ms" onclick="openModal('${card.id}')">
       <div class="card-actions">
         <button class="action-btn fav-btn${isFav?' active':''}" onclick="event.stopPropagation();toggleFav('${card.id}')" title="${isFav?'Verwijder uit wishlist':'Voeg toe aan wishlist'}">${isFav?'♥':'♡'}</button>
         <button class="action-btn collect-btn${isColl?' active':''}" onclick="event.stopPropagation();toggleCollected('${card.id}')" title="${isColl?'Markeer als niet-verzameld':'Markeer als verzameld'}">✓</button>
       </div>
-      ${isColl?'<div class="collected-badge">Verzameld</div>':''}
+      ${isColl?'<div class="collected-badge">Verzameld ✓</div>':''}
       ${img?`<img src="${img}" alt="${esc(card.name)}" loading="lazy"/>`:`<div class="card-no-img">Geen afbeelding</div>`}
       <div class="card-info">
         <div class="card-name">${esc(card.name)}</div>
         <div class="card-meta">${esc(card.set?.name||'')} · #${esc(card.number)}</div>
         <div class="card-price${price==null?' no-price':''}">
           ${price!=null
-            ? (cmUrl?`<a href="${cmUrl}" target="_blank" onclick="event.stopPropagation()">€${price.toFixed(2)}</a> <span style="font-size:9px;color:var(--text3);font-weight:400">trend</span>`
-              : `€${price.toFixed(2)} <span style="font-size:9px;color:var(--text3);font-weight:400">trend</span>`)
-            : '—'}
+            ?((cmUrl?`<a href="${cmUrl}" target="_blank" onclick="event.stopPropagation()">€${price.toFixed(2)}</a>`:`€${price.toFixed(2)}`)+`<span class="price-label">trend</span>`)
+            :'—'}
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-// ── Pagination ────────────────────────────────────────────────────
 function renderPagination(){
   const pag=document.getElementById('pagination');
   if(S.totalPages<=1){pag.style.display='none';return;}
@@ -569,115 +576,61 @@ function renderPagination(){
   document.getElementById('btn-next').disabled=S.page===S.totalPages;
 }
 function changePage(dir){const np=S.page+dir;if(np<1||np>S.totalPages)return;S.page=np;window.scrollTo({top:0,behavior:'smooth'});fetchCards();}
-
-// ── Search ────────────────────────────────────────────────────────
-function onSearch(){
-  const val=document.getElementById('search-input').value;
-  document.getElementById('search-clear').style.display=val?'block':'none';
-  clearTimeout(S.searchTimer);
-  S.searchTimer=setTimeout(()=>{S.search=val;S.page=1;fetchCards();},400);
-}
+function onSearch(){const val=document.getElementById('search-input').value;document.getElementById('search-clear').style.display=val?'block':'none';clearTimeout(S.searchTimer);S.searchTimer=setTimeout(()=>{S.search=val;S.page=1;fetchCards();},400);}
 function clearSearch(){document.getElementById('search-input').value='';document.getElementById('search-clear').style.display='none';S.search='';S.page=1;fetchCards();}
-
-// ── Set filter ────────────────────────────────────────────────────
 function onSetChange(){S.selectedSet=document.getElementById('set-select').value;S.page=1;fetchCards();}
 
-// ── Favorites ─────────────────────────────────────────────────────
 function toggleFav(cardId){
-  const card=S.cards.find(c=>c.id===cardId)||S.favorites[cardId];
-  if(!card)return;
-  if(S.favorites[cardId])delete S.favorites[cardId];
-  else S.favorites[cardId]=card;
-  saveUserData(); updateBadges(); renderGrid();
-  if(S.modalCard?.id===cardId)updateModalFavBtn();
+  const card=S.cards.find(c=>c.id===cardId)||S.favorites[cardId];if(!card)return;
+  if(S.favorites[cardId])delete S.favorites[cardId];else S.favorites[cardId]=card;
+  saveUserData();updateBadges();renderGrid();if(S.modalCard?.id===cardId)updateModalFavBtn();
 }
 function toggleModalFav(){if(!S.modalCard)return;toggleFav(S.modalCard.id);}
-function updateModalFavBtn(){
-  const btn=document.getElementById('modal-fav-btn');
-  const isFav=!!S.favorites[S.modalCard?.id];
-  btn.textContent=isFav?'♥ In wishlist':'♡ Wishlist';
-  btn.className='modal-fav-btn'+(isFav?' active':'');
-}
-
-// ── Collected ─────────────────────────────────────────────────────
+function updateModalFavBtn(){const btn=document.getElementById('modal-fav-btn');const isFav=!!S.favorites[S.modalCard?.id];btn.textContent=isFav?'♥ In wishlist':'♡ Wishlist';btn.className='modal-fav-btn'+(isFav?' active':'');}
 function toggleCollected(cardId){
-  const card=S.cards.find(c=>c.id===cardId)||S.favorites[cardId]||S.collected[cardId];
-  S.collected[cardId]=!S.collected[cardId];
-  if(!S.collected[cardId])delete S.collected[cardId];
-  saveUserData(); updateBadges(); renderGrid();
+  S.collected[cardId]=!S.collected[cardId];if(!S.collected[cardId])delete S.collected[cardId];
+  saveUserData();updateBadges();renderGrid();
 }
-function toggleCollectedById(cardId){
-  S.collected[cardId]=!S.collected[cardId];
-  if(!S.collected[cardId])delete S.collected[cardId];
-  saveUserData(); updateBadges();
-}
-
+function toggleCollectedById(cardId){S.collected[cardId]=!S.collected[cardId];if(!S.collected[cardId])delete S.collected[cardId];saveUserData();updateBadges();}
 function updateBadges(){
-  const fc=Object.keys(S.favorites).length;
-  const cc=Object.keys(S.collected).length;
-  const fb=document.getElementById('fav-count');
-  const cb=document.getElementById('coll-count');
-  fb.textContent=fc; fb.style.display=fc>0?'inline':'none';
-  cb.textContent=cc; cb.style.display=cc>0?'inline':'none';
+  const fc=Object.keys(S.favorites).length;const cc=Object.keys(S.collected).length;
+  const fb=document.getElementById('fav-count');const cb=document.getElementById('coll-count');
+  fb.textContent=fc;fb.style.display=fc>0?'inline':'none';cb.textContent=cc;cb.style.display=cc>0?'inline':'none';
 }
 
-// ── View switching ────────────────────────────────────────────────
 function switchView(v){
-  ['browse','wishlist','collected'].forEach(n=>{
-    document.getElementById('view-'+n).style.display=v===n?'block':'none';
-    document.getElementById('tab-'+n).className='tab'+(v===n?' active':'');
-  });
-  if(v==='wishlist')renderListView('wishlist');
-  if(v==='collected')renderListView('collected');
+  ['browse','wishlist','collected'].forEach(n=>{document.getElementById('view-'+n).style.display=v===n?'block':'none';document.getElementById('tab-'+n).className='tab'+(v===n?' active':'');});
+  if(v==='wishlist')renderListView('wishlist');if(v==='collected')renderListView('collected');
 }
 
-// ── List view (wishlist + collected share the same template) ───────
 function renderListView(type){
-  const view=document.getElementById('view-'+type);
-  const isWish=type==='wishlist';
+  const view=document.getElementById('view-'+type);const isWish=type==='wishlist';
   const items=isWish?Object.values(S.favorites):Object.keys(S.collected).map(id=>S.favorites[id]||S.cards.find(c=>c.id===id)).filter(Boolean);
-
-  if(!items.length){
-    view.innerHTML=`<div class="wish-empty">
-      <div class="wish-empty-icon">${isWish?'♡':'✓'}</div>
-      <p>${isWish?'Nog geen favorieten':'Nog niets verzameld'}</p>
-      <small>${isWish?'Klik ♡ op een kaart om hem toe te voegen':'Klik ✓ op een kaart om hem te markeren'}</small>
-    </div>`;
-    return;
-  }
-
+  if(!items.length){view.innerHTML=`<div class="wish-empty"><div class="wish-empty-icon">${isWish?'♡':'✓'}</div><p>${isWish?'Nog geen favorieten':'Nog niets verzameld'}</p><small>${isWish?'Klik ♡ op een kaart om hem toe te voegen':'Klik ✓ op een kaart om hem te markeren'}</small></div>`;return;}
   const getP=c=>{const cm=c?.cardmarket?.prices;if(cm)return cm.trendPrice??cm.avg30??null;const t=c?.tcgplayer?.prices;if(t){const v=t.holofoil||t.normal||Object.values(t)[0];return v?.market??null;}return null;};
   const total=items.reduce((s,c)=>s+(getP(c)??0),0);
   const collItems=items.filter(c=>S.collected[c.id]);
   const collTotal=collItems.reduce((s,c)=>s+(getP(c)??0),0);
   const pct=items.length?(collItems.length/items.length)*100:0;
-
   view.innerHTML=`
     <div class="stats-grid">
       <div class="stat-card"><div class="stat-label">${isWish?'Totaal wishlist':'Totaal verzameld'}</div><div class="stat-value">${fmtPrice(total)}</div><div class="stat-sub">${items.length} kaarten</div></div>
       ${isWish?`<div class="stat-card"><div class="stat-label">Gecollect</div><div class="stat-value green">${fmtPrice(collTotal)}</div><div class="stat-sub">${collItems.length} kaarten</div></div>
       <div class="stat-card"><div class="stat-label">Nog te halen</div><div class="stat-value teal">${fmtPrice(total-collTotal)}</div><div class="stat-sub">${items.length-collItems.length} kaarten</div></div>`:''}
     </div>
-    ${isWish?`<div class="progress-row"><span>Voortgang</span><span>${collItems.length}/${items.length}</span></div>
-    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`:''}
+    ${isWish?`<div class="progress-row"><span>Voortgang</span><span>${collItems.length}/${items.length}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`:''}
     <div class="list-rows">
       ${items.map(card=>{
-        const isC=!!S.collected[card.id];
-        const price=getP(card);
-        const cmUrl=card?.cardmarket?.url||'';
-        const img=card?.images?.small||'';
+        const isC=!!S.collected[card.id];const price=getP(card);const cmUrl=card?.cardmarket?.url||'';const img=card?.images?.small||'';
         return `<div class="list-row${isC?' collected':''}" id="lr-${card.id}">
           ${isWish?`<button class="check-btn${isC?' checked':''}" onclick="toggleCollectedInList('${card.id}','${type}')">${isC?'✓':''}</button>`:''}
-          ${img?`<img class="row-thumb" src="${img}" alt="${esc(card.name)}" onclick="openModalFromList('${card.id}')"/>`:
-            '<div style="width:40px;height:56px;border-radius:5px;background:var(--surface2);flex-shrink:0"></div>'}
+          ${img?`<img class="row-thumb" src="${img}" alt="${esc(card.name)}" onclick="openModalFromList('${card.id}')"/>`:'<div style="width:42px;height:58px;border-radius:6px;background:rgba(26,39,68,0.6);flex-shrink:0"></div>'}
           <div class="row-info" onclick="openModalFromList('${card.id}')">
             <div class="row-name">${esc(card.name)}</div>
             <div class="row-meta">${esc(card?.set?.name||'')} · #${esc(card?.number||'')}${card?.artist?` · 🎨 ${esc(card.artist)}`:''}</div>
           </div>
           <div class="row-price">
-            <div class="row-price-val${price==null?' no-price':''}">
-              ${price!=null?(cmUrl?`<a href="${cmUrl}" target="_blank">€${price.toFixed(2)}</a>`:`€${price.toFixed(2)}`):'—'}
-            </div>
+            <div class="row-price-val${price==null?' no-price':''}">${price!=null?(cmUrl?`<a href="${cmUrl}" target="_blank">€${price.toFixed(2)}</a>`:`€${price.toFixed(2)}`):'—'}</div>
             ${price!=null?'<div class="row-price-sub">trend</div>':''}
           </div>
           ${isWish?`<button class="remove-btn" onclick="removeFav('${card.id}')">×</button>`:''}
@@ -687,125 +640,59 @@ function renderListView(type){
     <div class="list-note">Trendprijzen via Pokémon TCG API (Cardmarket) · actueel bij laden</div>`;
 }
 
-function toggleCollectedInList(cardId, type){
-  toggleCollectedById(cardId);
-  renderListView(type);
-  // Also re-render grid if visible
-  if(document.getElementById('view-browse').style.display!=='none') renderGrid();
-}
-
-function removeFav(cardId){
-  delete S.favorites[cardId];
-  saveUserData(); updateBadges();
-  renderListView('wishlist');
-  if(document.getElementById('view-browse').style.display!=='none') renderGrid();
-}
-
+function toggleCollectedInList(cardId,type){toggleCollectedById(cardId);renderListView(type);if(document.getElementById('view-browse').style.display!=='none')renderGrid();}
+function removeFav(cardId){delete S.favorites[cardId];saveUserData();updateBadges();renderListView('wishlist');if(document.getElementById('view-browse').style.display!=='none')renderGrid();}
 async function openModalFromList(cardId){
-  const card=S.favorites[cardId]||S.collected_cache?.[cardId]||S.cards.find(c=>c.id===cardId);
-  if(!card){try{const r=await fetch(`/api/cards/${cardId}`);const d=await r.json();if(d.data){if(!S.cards.find(c=>c.id===cardId))S.cards.push(d.data);await openModal(cardId);}}catch{}return;}
-  if(!S.cards.find(c=>c.id===cardId))S.cards.push(card);
-  await openModal(cardId);
+  const card=S.favorites[cardId]||S.cards.find(c=>c.id===cardId);
+  if(!card){try{const r=await fetch(`/api/cards/${cardId}`);const d=await r.json();if(d.data){S.cards.push(d.data);await openModal(cardId);}}catch{}return;}
+  if(!S.cards.find(c=>c.id===cardId))S.cards.push(card);await openModal(cardId);
 }
 
-// ── Modal ─────────────────────────────────────────────────────────
 async function openModal(cardId){
-  const card=S.cards.find(c=>c.id===cardId)||S.favorites[cardId];
-  if(!card)return;
-  S.modalCard=card;
-  document.getElementById('modal').style.display='flex';
+  const card=S.cards.find(c=>c.id===cardId)||S.favorites[cardId];if(!card)return;
+  S.modalCard=card;document.getElementById('modal').style.display='flex';
   document.getElementById('modal-name').textContent=card.name;
   document.getElementById('modal-sub').textContent=`${card.set?.name||''} · #${card.number} · ${card.rarity||''}`;
   updateModalFavBtn();
-  const imgEl=document.getElementById('modal-img');
-  const src=card.images?.large||card.images?.small||'';
+  const imgEl=document.getElementById('modal-img');const src=card.images?.large||card.images?.small||'';
   if(src){imgEl.src=src;imgEl.style.display='block';}else imgEl.style.display='none';
-  document.getElementById('modal-info').innerHTML=[
-    card.artist?ir('Illustrator',card.artist):'',
-    card.subtypes?.length?ir('Subtype',card.subtypes.join(', ')):'',
-    card.types?.length?ir('Type',card.types.join(', ')):'',
-    card.hp?ir('HP',card.hp):'',
-  ].join('');
+  document.getElementById('modal-info').innerHTML=[card.artist?ir('Illustrator',card.artist):'',card.subtypes?.length?ir('Subtype',card.subtypes.join(', ')):'',card.types?.length?ir('Type',card.types.join(', ')):'',card.hp?ir('HP',card.hp):''].join('');
   document.getElementById('modal-prices').innerHTML='<div style="font-size:12px;color:var(--text3)">Laden…</div>';
-  document.getElementById('modal-attacks').innerHTML='';
-  document.getElementById('modal-cm-link').style.display='none';
-
+  document.getElementById('modal-attacks').innerHTML='';document.getElementById('modal-cm-link').style.display='none';
   try{
-    const r=await fetch(`/api/cards/${cardId}`);
-    const d=await r.json();
-    const full=d.data||card;
-    S.modalCard=full;
-    // Update card in cache
-    const idx=S.cards.findIndex(c=>c.id===cardId);
-    if(idx>-1)S.cards[idx]=full;
-    if(S.favorites[cardId])S.favorites[cardId]=full;
-    updateModalFavBtn();
-
-    if(full.images?.large){imgEl.src=full.images.large;}
-
-    const cm=full.cardmarket?.prices;
-    const tcg=full.tcgplayer?.prices;
-    const cmUrl=full.cardmarket?.url||'';
+    const r=await fetch(`/api/cards/${cardId}`);const d=await r.json();const full=d.data||card;
+    S.modalCard=full;const idx=S.cards.findIndex(c=>c.id===cardId);if(idx>-1)S.cards[idx]=full;
+    if(S.favorites[cardId])S.favorites[cardId]=full;updateModalFavBtn();
+    if(full.images?.large)imgEl.src=full.images.large;
+    const cm=full.cardmarket?.prices;const tcg=full.tcgplayer?.prices;const cmUrl=full.cardmarket?.url||'';
     let ph='';
     if(cm){
-      const trend=cm.trendPrice;
-      const avg30=cm.avg30;
-      const avgSell=cm.averageSellPrice;
-      const low=cm.lowPrice;
       ph=`<div class="price-grid">
-        ${trend!=null?`<div class="ps hi"><div class="ps-label">Trendprijs</div><div class="ps-value">${cmUrl?`<a href="${cmUrl}" target="_blank">€${trend.toFixed(2)}</a>`:`€${trend.toFixed(2)}`}</div></div>`:''}
-        ${avg30!=null?`<div class="ps"><div class="ps-label">30-daags gemiddelde</div><div class="ps-value">€${avg30.toFixed(2)}</div></div>`:''}
-        ${avgSell!=null?`<div class="ps"><div class="ps-label">Gem. verkoop</div><div class="ps-value">€${avgSell.toFixed(2)}</div></div>`:''}
-        ${low!=null?`<div class="ps"><div class="ps-label">Laagste prijs</div><div class="ps-value">€${low.toFixed(2)}</div></div>`:''}
+        ${cm.trendPrice!=null?`<div class="ps hi"><div class="ps-label">Trendprijs</div><div class="ps-value">${cmUrl?`<a href="${cmUrl}" target="_blank">€${cm.trendPrice.toFixed(2)}</a>`:`€${cm.trendPrice.toFixed(2)}`}</div></div>`:''}
+        ${cm.avg30!=null?`<div class="ps"><div class="ps-label">30-daags gemiddelde</div><div class="ps-value">€${cm.avg30.toFixed(2)}</div></div>`:''}
+        ${cm.averageSellPrice!=null?`<div class="ps"><div class="ps-label">Gem. verkoop</div><div class="ps-value">€${cm.averageSellPrice.toFixed(2)}</div></div>`:''}
+        ${cm.lowPrice!=null?`<div class="ps"><div class="ps-label">Laagste prijs</div><div class="ps-value">€${cm.lowPrice.toFixed(2)}</div></div>`:''}
       </div>`;
       if(cmUrl){document.getElementById('modal-cm-link').href=cmUrl;document.getElementById('modal-cm-link').style.display='inline';}
-    } else if(tcg){
-      const v=tcg.holofoil||tcg.normal||Object.values(tcg)[0];
-      ph=v?.market!=null?`<div class="price-grid"><div class="ps hi"><div class="ps-label">Marktprijs (TCGPlayer)</div><div class="ps-value">€${v.market.toFixed(2)}</div></div></div>`:'<div style="font-size:12px;color:var(--text3)">Geen prijsdata</div>';
-    } else ph='<div style="font-size:12px;color:var(--text3)">Geen prijsdata beschikbaar</div>';
+    }else if(tcg){const v=tcg.holofoil||tcg.normal||Object.values(tcg)[0];ph=v?.market!=null?`<div class="price-grid"><div class="ps hi"><div class="ps-label">Marktprijs (TCGPlayer)</div><div class="ps-value">€${v.market.toFixed(2)}</div></div></div>`:'<div style="font-size:12px;color:var(--text3)">Geen prijsdata</div>';}
+    else ph='<div style="font-size:12px;color:var(--text3)">Geen prijsdata beschikbaar</div>';
     document.getElementById('modal-prices').innerHTML=ph;
-
-    if(full.attacks?.length){
-      document.getElementById('modal-attacks').innerHTML=`<div class="attacks-section">
-        <div class="section-title">Aanvallen</div>
-        ${full.attacks.map(a=>`<div class="attack"><span class="atk-name">${esc(a.name)}</span>${a.damage?`<span class="atk-dmg">${esc(a.damage)}</span>`:''} ${a.text?`<div class="atk-text">${esc(a.text)}</div>`:''}</div>`).join('')}
-      </div>`;
-    }
-    document.getElementById('modal-info').innerHTML=[
-      full.artist?ir('Illustrator',full.artist):'',
-      full.subtypes?.length?ir('Subtype',full.subtypes.join(', ')):'',
-      full.types?.length?ir('Type',full.types.join(', ')):'',
-      full.hp?ir('HP',full.hp):'',
-    ].join('');
-  } catch(e){document.getElementById('modal-prices').innerHTML='<div style="font-size:12px;color:var(--text3)">Kon details niet laden</div>';}
+    if(full.attacks?.length){document.getElementById('modal-attacks').innerHTML=`<div class="attacks-section"><div class="section-title">Aanvallen</div>${full.attacks.map(a=>`<div class="attack"><span class="atk-name">${esc(a.name)}</span>${a.damage?`<span class="atk-dmg">${esc(a.damage)}</span>`:''} ${a.text?`<div class="atk-text">${esc(a.text)}</div>`:''}</div>`).join('')}</div>`;}
+    document.getElementById('modal-info').innerHTML=[full.artist?ir('Illustrator',full.artist):'',full.subtypes?.length?ir('Subtype',full.subtypes.join(', ')):'',full.types?.length?ir('Type',full.types.join(', ')):'',full.hp?ir('HP',full.hp):''].join('');
+  }catch(e){document.getElementById('modal-prices').innerHTML='<div style="font-size:12px;color:var(--text3)">Kon details niet laden</div>';}
 }
-
 function closeModal(){document.getElementById('modal').style.display='none';S.modalCard=null;}
 
-// ── Helpers ───────────────────────────────────────────────────────
-function getTrendPrice(card){
-  return card?.cardmarket?.prices?.trendPrice
-    ??card?.cardmarket?.prices?.avg30
-    ??card?.tcgplayer?.prices?.holofoil?.market
-    ??card?.tcgplayer?.prices?.normal?.market
-    ??null;
-}
+function getTrendPrice(card){return card?.cardmarket?.prices?.trendPrice??card?.cardmarket?.prices?.avg30??card?.tcgplayer?.prices?.holofoil?.market??card?.tcgplayer?.prices?.normal?.market??null;}
 function fmtPrice(p){return p!=null?'€'+Number(p).toFixed(2):'—';}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function ir(label,value){return `<div class="info-row"><span class="info-label">${esc(label)}</span><span class="info-value">${esc(value)}</span></div>`;}
-function setLoading(on){
-  document.getElementById('spinner').style.display=on?'flex':'none';
-  document.getElementById('card-grid').style.display=on?'none':'grid';
-}
+function ir(l,v){return `<div class="info-row"><span class="info-label">${esc(l)}</span><span class="info-value">${esc(v)}</span></div>`;}
+function setLoading(on){document.getElementById('spinner').style.display=on?'flex':'none';document.getElementById('card-grid').style.display=on?'none':'grid';}
 function showError(msg){const el=document.getElementById('error-box');el.textContent=msg;el.style.display='block';}
 function clearError(){document.getElementById('error-box').style.display='none';}
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();if(S.alertsOpen)toggleAlerts();}});
-document.addEventListener('click',e=>{
-  const tray=document.getElementById('alerts-tray');
-  const btn=document.getElementById('alert-btn');
-  if(S.alertsOpen&&!tray.contains(e.target)&&!btn.contains(e.target))toggleAlerts();
-});
+document.addEventListener('click',e=>{const tray=document.getElementById('alerts-tray');const btn=document.getElementById('alert-btn');if(S.alertsOpen&&!tray.contains(e.target)&&!btn.contains(e.target))toggleAlerts();});
 init();
 </script>
 </body>
