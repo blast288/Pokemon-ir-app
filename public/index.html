@@ -299,20 +299,49 @@ async function loadSets() {
   try {
     const r = await fetch('/api/sets');
     const sets = await r.json();
+
+    // Separate promo sets from regular sets
+    const promoSets = sets.filter(s => s.isPromo);
+    const regularSets = sets.filter(s => !s.isPromo);
+
+    // Group regular sets by series
     const groups = {};
-    sets.forEach(s => { const ser = s.series||'Overig'; if(!groups[ser]) groups[ser]=[]; groups[ser].push(s); });
-    let html = `<select id="set-select" onchange="onSetChange()" style="max-width:260px"><option value="all">Alle sets (${sets.length} sets)</option>`;
-    const order = ['Mega Evolution','Scarlet & Violet','Sword & Shield'];
-    const keys = [...order, ...Object.keys(groups).filter(k=>!order.includes(k))];
+    regularSets.forEach(s => {
+      const ser = s.series || 'Overig';
+      if (!groups[ser]) groups[ser] = [];
+      groups[ser].push(s);
+    });
+
+    const totalCount = sets.length;
+    let html = `<select id="set-select" onchange="onSetChange()" style="max-width:260px">`;
+    html += `<option value="all">Alle sets (${totalCount} sets)</option>`;
+
+    // Regular sets grouped by series
+    const order = ['Mega Evolution', 'Scarlet & Violet', 'Sword & Shield'];
+    const keys = [...order, ...Object.keys(groups).filter(k => !order.includes(k))];
     keys.forEach(ser => {
       if (!groups[ser]) return;
       html += `<optgroup label="── ${ser} ──">`;
-      groups[ser].forEach(s => { html += `<option value="${s.id}">${s.name} (${s.total} IR)</option>`; });
+      groups[ser].forEach(s => {
+        html += `<option value="${s.id}">${s.name} (${s.total} IR)</option>`;
+      });
       html += `</optgroup>`;
     });
+
+    // Promo sets in their own group
+    if (promoSets.length > 0) {
+      html += `<optgroup label="── ⭐ Promo Sets ──">`;
+      promoSets.forEach(s => {
+        html += `<option value="${s.id}">${s.name} (${s.total} promos)</option>`;
+      });
+      html += `</optgroup>`;
+    }
+
     html += '</select>';
     wrap.innerHTML = html;
-  } catch { wrap.innerHTML = '<select id="set-select" onchange="onSetChange()"><option value="all">Alle sets</option></select>'; }
+  } catch {
+    wrap.innerHTML = '<select id="set-select" onchange="onSetChange()"><option value="all">Alle sets</option></select>';
+  }
 }
 
 // ── Alerts ────────────────────────────────────────────────────────
@@ -383,7 +412,7 @@ function renderGrid() {
       ${img ? `<img src="${img}" alt="${esc(card.name)}" loading="lazy"/>` : `<div class="card-no-img">Geen afbeelding</div>`}
       <div class="card-info">
         <div class="card-name">${esc(card.name)}</div>
-        <div class="card-meta">${esc(card.set?.name||'')} · #${esc(card.number)}</div>
+        <div class="card-meta">${esc(card.set?.name||'')} · #${esc(card.number)}${card.rarity==='Black Star Promo'?' · <span style=\"color:var(--electric);font-size:9px;font-weight:700\">PROMO</span>':''}</div>
         <div class="card-price${price==null?' no-price':''}">
           ${price != null
             ? (cmUrl ? `<a href="${cmUrl}" target="_blank" onclick="event.stopPropagation()">${currency}${price.toFixed(2)}</a>` : `${currency}${price.toFixed(2)}`) + `<span class="price-label">${source==='tcgplayer'?'TCGPlayer':'trend'}</span>`
@@ -466,6 +495,7 @@ function renderListView(type) {
     // FIX: Use cardCache to look up ALL collected cards, not just current page
     items = Object.keys(S.collected).map(id => {
       // Priority: favorites > cardCache > nothing
+      // cardCache is loaded from server on init, so this works across page refreshes
       return S.favorites[id] || S.cardCache[id] || null;
     }).filter(Boolean);
   }
