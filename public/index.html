@@ -7,190 +7,57 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  /* Bellibolt palette */
-  --navy:#1a2744;
-  --navy2:#0f1a2e;
-  --olive:#4a4a1a;
-  --teal:#3ecfba;
-  --teal2:#2ab0a0;
-  --teal-glow:rgba(62,207,186,0.25);
-  --electric:#e8f060;
-  --electric2:#c8d840;
-  --electric-glow:rgba(232,240,96,0.3);
-  --gold:#f5c842;
-  --gold-glow:rgba(245,200,66,0.25);
-  --mint:#aaeedd;
-  --surface:rgba(255,255,255,0.06);
-  --surface2:rgba(255,255,255,0.1);
-  --border:rgba(62,207,186,0.18);
-  --border2:rgba(232,240,96,0.15);
-  --text:#e8f4f0;
-  --text2:rgba(232,244,240,0.6);
-  --text3:rgba(232,244,240,0.32);
-  --green:#56e87a;
-  --red:#f85149;
-  --radius:13px;
+  --navy:#1a2744;--navy2:#0f1a2e;--teal:#3ecfba;--teal2:#2ab0a0;--teal-glow:rgba(62,207,186,0.25);
+  --electric:#e8f060;--electric2:#c8d840;--electric-glow:rgba(232,240,96,0.3);
+  --gold:#f5c842;--gold-glow:rgba(245,200,66,0.25);--mint:#aaeedd;
+  --surface:rgba(255,255,255,0.06);--surface2:rgba(255,255,255,0.1);
+  --border:rgba(62,207,186,0.18);--border2:rgba(232,240,96,0.15);
+  --text:#e8f4f0;--text2:rgba(232,244,240,0.6);--text3:rgba(232,244,240,0.32);
+  --green:#56e87a;--red:#f85149;--radius:13px;
 }
-
-body{
-  background:var(--navy2);
-  color:var(--text);
-  font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  min-height:100vh;
-  overflow-x:hidden;
-}
-
-/* ── Bellibolt sunray background ── */
-.bg-rays{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
-  overflow:hidden;
-}
-.bg-rays::before{
-  content:'';
-  position:absolute;
-  /* Sun origin: bottom-left, like the card */
-  bottom:-20%;left:-10%;
-  width:200%;height:200%;
-  background:conic-gradient(
-    from 0deg at 15% 85%,
-    #1a2f50 0deg, #3a4a1a 10deg,
-    #1a2f50 20deg, #3a4a1a 30deg,
-    #1a2f50 40deg, #3a4a1a 50deg,
-    #1a2f50 60deg, #3a4a1a 70deg,
-    #1a2f50 80deg, #3a4a1a 90deg,
-    #1a2f50 100deg, #3a4a1a 110deg,
-    #1a2f50 120deg, #1a2f50 360deg
-  );
-  opacity:0.7;
-}
-/* Teal radial glow from bottom-left (where Bellibolt sits) */
-.bg-rays::after{
-  content:'';
-  position:absolute;
-  bottom:-5%;left:-5%;
-  width:70%;height:70%;
-  background:radial-gradient(ellipse at 20% 90%, rgba(62,207,186,0.18) 0%, transparent 65%);
-}
-
-/* Lightning bolts SVG overlay */
-.bg-lightning{
-  position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.18;
-}
-
+body{background:var(--navy2);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;min-height:100vh;overflow-x:hidden}
+.bg-rays{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+.bg-rays::before{content:'';position:absolute;bottom:-20%;left:-10%;width:200%;height:200%;background:conic-gradient(from 0deg at 15% 85%,#1a2f50 0deg,#3a4a1a 10deg,#1a2f50 20deg,#3a4a1a 30deg,#1a2f50 40deg,#3a4a1a 50deg,#1a2f50 60deg,#3a4a1a 70deg,#1a2f50 80deg,#3a4a1a 90deg,#1a2f50 100deg,#3a4a1a 110deg,#1a2f50 120deg,#1a2f50 360deg);opacity:0.7}
+.bg-rays::after{content:'';position:absolute;bottom:-5%;left:-5%;width:70%;height:70%;background:radial-gradient(ellipse at 20% 90%,rgba(62,207,186,0.18) 0%,transparent 65%)}
+.bg-lightning{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.18}
 #app{position:relative;z-index:1;max-width:1300px;margin:0 auto;padding:0 20px 80px}
-
-/* ── Header ── */
-header{
-  padding:24px 0 20px;
-  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;
-  border-bottom:1px solid rgba(232,240,96,0.2);
-  position:relative;
-}
-header::after{
-  content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;
-  background:linear-gradient(90deg,var(--teal),var(--electric),var(--teal));
-  opacity:0.4;
-}
+header{padding:24px 0 20px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;border-bottom:1px solid rgba(232,240,96,0.2);position:relative}
+header::after{content:'';position:absolute;bottom:-1px;left:0;right:0;height:1px;background:linear-gradient(90deg,var(--teal),var(--electric),var(--teal));opacity:0.4}
 .logo{display:flex;align-items:center;gap:14px}
-.logo-icon{
-  width:48px;height:48px;border-radius:50%;
-  background:linear-gradient(135deg,var(--teal),var(--electric));
-  display:flex;align-items:center;justify-content:center;
-  font-size:24px;
-  box-shadow:0 0 24px var(--teal-glow), 0 0 48px rgba(62,207,186,0.1);
-  flex-shrink:0;
-  animation:pulse-glow 3s ease-in-out infinite;
-}
-@keyframes pulse-glow{
-  0%,100%{box-shadow:0 0 24px var(--teal-glow),0 0 48px rgba(62,207,186,0.1)}
-  50%{box-shadow:0 0 32px rgba(62,207,186,0.5),0 0 64px rgba(232,240,96,0.15)}
-}
-.logo-text h1{
-  font-size:clamp(18px,3vw,28px);font-weight:800;letter-spacing:-0.03em;
-  background:linear-gradient(90deg,var(--teal),var(--electric));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
+.logo-icon{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--teal),var(--electric));display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 0 24px var(--teal-glow),0 0 48px rgba(62,207,186,0.1);flex-shrink:0;animation:pulse-glow 3s ease-in-out infinite}
+@keyframes pulse-glow{0%,100%{box-shadow:0 0 24px var(--teal-glow),0 0 48px rgba(62,207,186,0.1)}50%{box-shadow:0 0 32px rgba(62,207,186,0.5),0 0 64px rgba(232,240,96,0.15)}}
+.logo-text h1{font-size:clamp(18px,3vw,28px);font-weight:800;letter-spacing:-0.03em;background:linear-gradient(90deg,var(--teal),var(--electric));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .logo-text p{font-size:11px;color:var(--text3);margin-top:2px;letter-spacing:0.1em;text-transform:uppercase}
 .header-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-
-/* ── Tabs ── */
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
-.tab{
-  background:rgba(26,39,68,0.8);border:1px solid var(--border);color:var(--text2);
-  padding:9px 16px;border-radius:9px;font-size:13px;cursor:pointer;
-  transition:all 0.2s;font-family:inherit;display:flex;align-items:center;gap:6px;
-  white-space:nowrap;backdrop-filter:blur(8px);
-}
+.tab{background:rgba(26,39,68,0.8);border:1px solid var(--border);color:var(--text2);padding:9px 16px;border-radius:9px;font-size:13px;cursor:pointer;transition:all 0.2s;font-family:inherit;display:flex;align-items:center;gap:6px;white-space:nowrap;backdrop-filter:blur(8px)}
 .tab:hover{background:rgba(62,207,186,0.12);border-color:var(--teal);color:var(--teal)}
-.tab.active{
-  background:linear-gradient(135deg,rgba(62,207,186,0.2),rgba(232,240,96,0.12));
-  border-color:var(--electric);color:var(--electric);font-weight:700;
-  box-shadow:0 0 16px rgba(232,240,96,0.15),inset 0 0 20px rgba(232,240,96,0.05);
-}
+.tab.active{background:linear-gradient(135deg,rgba(62,207,186,0.2),rgba(232,240,96,0.12));border-color:var(--electric);color:var(--electric);font-weight:700;box-shadow:0 0 16px rgba(232,240,96,0.15),inset 0 0 20px rgba(232,240,96,0.05)}
 .tab-badge{background:var(--teal);color:#0f1a2e;border-radius:10px;padding:1px 7px;font-size:10px;font-weight:800}
 .tab-badge.gold{background:var(--gold);color:#0f1a2e}
-
-.alert-btn{
-  position:relative;background:rgba(26,39,68,0.8);border:1px solid var(--border);
-  color:var(--text2);width:40px;height:40px;border-radius:9px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:17px;
-  transition:all 0.2s;backdrop-filter:blur(8px);
-}
+.alert-btn{position:relative;background:rgba(26,39,68,0.8);border:1px solid var(--border);color:var(--text2);width:40px;height:40px;border-radius:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px;transition:all 0.2s;backdrop-filter:blur(8px)}
 .alert-btn:hover{background:rgba(62,207,186,0.12);border-color:var(--teal);color:var(--teal)}
 .alert-btn.has-alerts{border-color:var(--electric);color:var(--electric);box-shadow:0 0 12px var(--electric-glow)}
 .alert-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;border-radius:50%;background:var(--electric);box-shadow:0 0 8px var(--electric)}
-
-/* ── Controls ── */
 .controls{padding:20px 0 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .search-wrap{position:relative;flex:1;min-width:180px;max-width:300px}
-.search-wrap input{
-  width:100%;background:rgba(26,39,68,0.9);border:1px solid var(--border);
-  color:var(--text);padding:10px 14px 10px 38px;border-radius:10px;font-size:13px;
-  outline:none;transition:all 0.2s;font-family:inherit;backdrop-filter:blur(8px);
-}
+.search-wrap input{width:100%;background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text);padding:10px 14px 10px 38px;border-radius:10px;font-size:13px;outline:none;transition:all 0.2s;font-family:inherit;backdrop-filter:blur(8px)}
 .search-wrap input:focus{border-color:var(--teal);box-shadow:0 0 12px var(--teal-glow)}
 .search-wrap input::placeholder{color:var(--text3)}
 .search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--teal);font-size:14px;pointer-events:none}
 .search-clear{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:16px;padding:0;display:none}
-select{
-  background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text);
-  padding:10px 13px;border-radius:10px;font-size:13px;cursor:pointer;outline:none;
-  font-family:inherit;transition:all 0.2s;backdrop-filter:blur(8px);max-width:240px;
-}
+select{background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text);padding:10px 13px;border-radius:10px;font-size:13px;cursor:pointer;outline:none;font-family:inherit;transition:all 0.2s;backdrop-filter:blur(8px);max-width:240px}
 select:focus{border-color:var(--teal);box-shadow:0 0 12px var(--teal-glow)}
 select option,select optgroup{background:#1a2744;color:var(--text)}
-.count-badge{
-  font-size:11px;color:var(--electric);margin-left:auto;
-  background:rgba(232,240,96,0.08);border:1px solid var(--border2);
-  padding:5px 12px;border-radius:20px;font-weight:600;letter-spacing:0.03em;
-}
+.count-badge{font-size:11px;color:var(--electric);margin-left:auto;background:rgba(232,240,96,0.08);border:1px solid var(--border2);padding:5px 12px;border-radius:20px;font-weight:600;letter-spacing:0.03em}
 .sets-loading{font-size:12px;color:var(--text3);display:flex;align-items:center;gap:7px}
 .sets-loading-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);animation:blink 1s infinite}
 @keyframes blink{0%,100%{opacity:1;box-shadow:0 0 6px var(--teal)}50%{opacity:0.3;box-shadow:none}}
-
-/* ── Card grid ── */
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(162px,1fr));gap:13px}
-
-.card-tile{
-  border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;
-  border:1px solid var(--border);background:rgba(15,26,46,0.85);
-  transition:all 0.22s;animation:rise 0.22s ease both;
-  backdrop-filter:blur(4px);
-}
-.card-tile:hover{
-  border-color:var(--electric);
-  transform:translateY(-6px) scale(1.03);
-  box-shadow:0 20px 50px rgba(0,0,0,0.7),0 0 30px var(--electric-glow);
-}
-.card-tile.is-collected{
-  filter:grayscale(65%) brightness(0.5);
-  border-color:rgba(86,232,122,0.25);
-}
-.card-tile.is-collected:hover{
-  filter:grayscale(30%) brightness(0.75);
-  border-color:var(--green);
-  box-shadow:0 20px 50px rgba(0,0,0,0.7),0 0 20px rgba(86,232,122,0.2);
-}
+.card-tile{border-radius:var(--radius);overflow:hidden;cursor:pointer;position:relative;border:1px solid var(--border);background:rgba(15,26,46,0.85);transition:all 0.22s;animation:rise 0.22s ease both;backdrop-filter:blur(4px)}
+.card-tile:hover{border-color:var(--electric);transform:translateY(-6px) scale(1.03);box-shadow:0 20px 50px rgba(0,0,0,0.7),0 0 30px var(--electric-glow)}
+.card-tile.is-collected{filter:grayscale(65%) brightness(0.5);border-color:rgba(86,232,122,0.25)}
+.card-tile.is-collected:hover{filter:grayscale(30%) brightness(0.75);border-color:var(--green);box-shadow:0 20px 50px rgba(0,0,0,0.7),0 0 20px rgba(86,232,122,0.2)}
 .card-tile img{width:100%;display:block}
 .card-no-img{aspect-ratio:2.5/3.5;background:rgba(26,39,68,0.6);display:flex;align-items:center;justify-content:center;font-size:11px;color:var(--text3)}
 .card-info{padding:9px 11px 11px;background:linear-gradient(180deg,rgba(15,26,46,0) 0%,rgba(15,26,46,0.95) 100%)}
@@ -201,58 +68,25 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 .card-price a:hover{text-decoration:underline;color:var(--gold)}
 .card-price .price-label{font-size:9px;color:var(--text3);font-weight:400}
 .card-price.no-price{color:var(--text3);font-weight:400;font-size:12px}
-
-/* Action buttons */
 .card-actions{position:absolute;top:7px;right:7px;display:flex;flex-direction:column;gap:5px;z-index:2}
-.action-btn{
-  width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:13px;
-  transition:all 0.18s;backdrop-filter:blur(8px);
-}
+.action-btn{width:28px;height:28px;border-radius:50%;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all 0.18s;backdrop-filter:blur(8px)}
 .action-btn:hover{transform:scale(1.2)}
 .fav-btn{background:rgba(0,0,0,0.65);color:rgba(245,200,66,0.7)}
 .fav-btn.active{background:var(--gold);color:#0f1a2e;box-shadow:0 0 14px var(--gold-glow)}
 .collect-btn{background:rgba(0,0,0,0.65);color:rgba(86,232,122,0.6)}
 .collect-btn.active{background:var(--green);color:#0f1a2e;box-shadow:0 0 14px rgba(86,232,122,0.4)}
-.collected-badge{
-  position:absolute;bottom:50px;left:50%;transform:translateX(-50%);
-  background:linear-gradient(90deg,var(--teal),var(--green));color:#0f1a2e;
-  font-size:9px;font-weight:800;padding:2px 10px;border-radius:10px;
-  white-space:nowrap;letter-spacing:0.06em;pointer-events:none;
-  box-shadow:0 2px 8px rgba(86,232,122,0.3);
-}
-
-/* ── Pagination ── */
+.collected-badge{position:absolute;bottom:50px;left:50%;transform:translateX(-50%);background:linear-gradient(90deg,var(--teal),var(--green));color:#0f1a2e;font-size:9px;font-weight:800;padding:2px 10px;border-radius:10px;white-space:nowrap;letter-spacing:0.06em;pointer-events:none;box-shadow:0 2px 8px rgba(86,232,122,0.3)}
 .pagination{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:44px}
-.pag-btn{
-  background:rgba(26,39,68,0.8);border:1px solid var(--border);color:var(--text2);
-  padding:9px 18px;border-radius:9px;font-size:13px;cursor:pointer;font-family:inherit;
-  transition:all 0.18s;backdrop-filter:blur(8px);
-}
+.pag-btn{background:rgba(26,39,68,0.8);border:1px solid var(--border);color:var(--text2);padding:9px 18px;border-radius:9px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.18s;backdrop-filter:blur(8px)}
 .pag-btn:hover:not(:disabled){background:rgba(62,207,186,0.15);border-color:var(--teal);color:var(--teal);box-shadow:0 0 12px var(--teal-glow)}
 .pag-btn:disabled{opacity:0.25;cursor:default}
 .pag-info{font-size:13px;color:var(--text3);min-width:70px;text-align:center}
-
-/* ── States ── */
 .empty{text-align:center;padding:80px 0;color:var(--text3);font-size:15px}
 .error-box{padding:13px 17px;background:rgba(248,81,73,0.1);border:1px solid rgba(248,81,73,0.3);border-radius:10px;margin-bottom:16px;font-size:13px;color:#f87070}
 .spinner{display:flex;justify-content:center;padding:70px 0}
-.spinner-ring{
-  width:36px;height:36px;
-  border:2px solid rgba(62,207,186,0.15);
-  border-top-color:var(--teal);
-  border-right-color:var(--electric);
-  border-radius:50%;animation:spin 0.7s linear infinite;
-}
-
-/* ── Stats ── */
+.spinner-ring{width:36px;height:36px;border:2px solid rgba(62,207,186,0.15);border-top-color:var(--teal);border-right-color:var(--electric);border-radius:50%;animation:spin 0.7s linear infinite}
 .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:9px;margin:22px 0}
-.stat-card{
-  padding:15px 16px;border-radius:var(--radius);
-  border:1px solid var(--border);
-  background:rgba(15,26,46,0.85);
-  position:relative;overflow:hidden;backdrop-filter:blur(8px);
-}
+.stat-card{padding:15px 16px;border-radius:var(--radius);border:1px solid var(--border);background:rgba(15,26,46,0.85);position:relative;overflow:hidden;backdrop-filter:blur(8px)}
 .stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--teal),var(--electric),var(--gold))}
 .stat-label{font-size:9px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-bottom:7px}
 .stat-value{font-size:22px;font-weight:800;color:var(--electric)}
@@ -262,22 +96,11 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 .progress-row{display:flex;justify-content:space-between;font-size:10px;color:var(--text3);margin-bottom:5px}
 .progress-bar{height:4px;background:rgba(255,255,255,0.06);border-radius:4px;margin-bottom:22px;overflow:hidden}
 .progress-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--teal),var(--green));transition:width 0.5s;box-shadow:0 0 8px rgba(86,232,122,0.4)}
-
-/* ── List rows ── */
 .list-rows{display:flex;flex-direction:column;gap:7px}
-.list-row{
-  display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:10px;
-  border:1px solid var(--border);background:rgba(15,26,46,0.8);
-  transition:all 0.18s;backdrop-filter:blur(4px);
-}
+.list-row{display:flex;align-items:center;gap:11px;padding:10px 13px;border-radius:10px;border:1px solid var(--border);background:rgba(15,26,46,0.8);transition:all 0.18s;backdrop-filter:blur(4px)}
 .list-row:hover{background:rgba(26,39,68,0.9);border-color:rgba(62,207,186,0.3)}
 .list-row.collected{border-color:rgba(86,232,122,0.2);background:rgba(86,232,122,0.04)}
-.check-btn{
-  width:22px;height:22px;border-radius:6px;flex-shrink:0;
-  border:1.5px solid rgba(255,255,255,0.2);background:transparent;
-  color:transparent;cursor:pointer;font-size:12px;
-  display:flex;align-items:center;justify-content:center;transition:all 0.18s;
-}
+.check-btn{width:22px;height:22px;border-radius:6px;flex-shrink:0;border:1.5px solid rgba(255,255,255,0.2);background:transparent;color:transparent;cursor:pointer;font-size:12px;display:flex;align-items:center;justify-content:center;transition:all 0.18s}
 .check-btn.checked{border-color:var(--green);background:rgba(86,232,122,0.2);color:var(--green)}
 .row-thumb{width:42px;border-radius:6px;cursor:pointer;flex-shrink:0;transition:transform 0.18s}
 .row-thumb:hover{transform:scale(1.1)}
@@ -298,14 +121,7 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 .wish-empty-icon{font-size:52px;opacity:0.15;margin-bottom:12px}
 .wish-empty p{font-size:15px;color:var(--text3)}
 .wish-empty small{font-size:11px;color:rgba(232,244,240,0.18);display:block;margin-top:6px}
-
-/* ── Alerts tray ── */
-.alerts-tray{
-  position:fixed;top:76px;right:18px;width:320px;z-index:200;
-  background:#12203a;border:1px solid rgba(232,240,96,0.3);border-radius:var(--radius);
-  box-shadow:0 20px 60px rgba(0,0,0,0.85),0 0 30px rgba(232,240,96,0.08);
-  overflow:hidden;animation:slideIn 0.2s ease;max-height:80vh;overflow-y:auto;
-}
+.alerts-tray{position:fixed;top:76px;right:18px;width:320px;z-index:200;background:#12203a;border:1px solid rgba(232,240,96,0.3);border-radius:var(--radius);box-shadow:0 20px 60px rgba(0,0,0,0.85),0 0 30px rgba(232,240,96,0.08);overflow:hidden;animation:slideIn 0.2s ease;max-height:80vh;overflow-y:auto}
 .alerts-header{padding:13px 16px;background:rgba(232,240,96,0.07);border-bottom:1px solid rgba(232,240,96,0.15);display:flex;justify-content:space-between;align-items:center}
 .alerts-title{font-size:13px;font-weight:700;color:var(--electric);display:flex;align-items:center;gap:6px}
 .alerts-close{background:none;border:none;color:var(--text3);cursor:pointer;font-size:19px;padding:0 2px;line-height:1}
@@ -317,42 +133,19 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 .alert-msg{font-size:10px;color:var(--electric);margin-top:2px}
 .alert-prices{font-size:10px;color:var(--text3);margin-top:1px}
 .alerts-empty{padding:22px;text-align:center;font-size:13px;color:var(--text3)}
-
-/* ── Modal ── */
-.modal-overlay{
-  position:fixed;inset:0;z-index:150;background:rgba(10,18,35,0.93);
-  display:flex;align-items:center;justify-content:center;
-  padding:20px;backdrop-filter:blur(12px);
-}
-.modal-box{
-  background:linear-gradient(160deg,#1a2f50 0%,#0f1a2e 100%);
-  border:1px solid rgba(62,207,186,0.25);border-radius:16px;
-  max-width:700px;width:100%;display:flex;gap:24px;padding:26px;flex-wrap:wrap;
-  box-shadow:0 40px 100px rgba(0,0,0,0.95),0 0 60px rgba(62,207,186,0.06);
-  max-height:90vh;overflow-y:auto;
-}
+.modal-overlay{position:fixed;inset:0;z-index:150;background:rgba(10,18,35,0.93);display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(12px)}
+.modal-box{background:linear-gradient(160deg,#1a2f50 0%,#0f1a2e 100%);border:1px solid rgba(62,207,186,0.25);border-radius:16px;max-width:700px;width:100%;display:flex;gap:24px;padding:26px;flex-wrap:wrap;box-shadow:0 40px 100px rgba(0,0,0,0.95),0 0 60px rgba(62,207,186,0.06);max-height:90vh;overflow-y:auto}
 .modal-img{width:200px;border-radius:12px;flex-shrink:0;align-self:flex-start;box-shadow:0 12px 40px rgba(0,0,0,0.7)}
 .modal-body{flex:1;min-width:175px}
 .modal-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start;margin-bottom:16px}
-.modal-name{
-  font-size:21px;font-weight:800;line-height:1.2;
-  background:linear-gradient(90deg,var(--text),var(--mint));
-  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
-}
+.modal-name{font-size:21px;font-weight:800;line-height:1.2;background:linear-gradient(90deg,var(--text),var(--mint));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
 .modal-sub{font-size:11px;color:var(--text3);margin-top:4px}
-.modal-fav-btn{
-  background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text2);
-  border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;
-  flex-shrink:0;white-space:nowrap;font-family:inherit;transition:all 0.18s;
-}
+.modal-fav-btn{background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text2);border-radius:8px;padding:7px 13px;cursor:pointer;font-size:12px;flex-shrink:0;white-space:nowrap;font-family:inherit;transition:all 0.18s}
 .modal-fav-btn.active{background:rgba(245,200,66,0.15);border-color:var(--gold);color:var(--gold);box-shadow:0 0 12px var(--gold-glow)}
 .info-row{display:flex;gap:10px;margin-bottom:6px;font-size:12px}
 .info-label{color:var(--text3);width:76px;flex-shrink:0}
 .info-value{color:var(--text2)}
-.price-box{
-  margin-top:16px;padding:14px;
-  background:rgba(232,240,96,0.04);border-radius:11px;border:1px solid rgba(232,240,96,0.12);
-}
+.price-box{margin-top:16px;padding:14px;background:rgba(232,240,96,0.04);border-radius:11px;border:1px solid rgba(232,240,96,0.12)}
 .price-box-title{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:rgba(232,240,96,0.5);margin-bottom:10px}
 .price-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
 .ps{padding:8px 10px;border-radius:8px;background:rgba(26,39,68,0.8)}
@@ -362,7 +155,8 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 .ps.hi .ps-value{color:var(--electric);font-weight:800}
 .ps-value a{color:inherit;text-decoration:none}
 .ps-value a:hover{text-decoration:underline;color:var(--gold)}
-.price-note{margin-top:8px;font-size:9px;color:var(--text3)}
+.price-source{margin-top:8px;font-size:9px;color:var(--text3);padding-top:6px;border-top:1px solid rgba(255,255,255,0.05)}
+.price-note{margin-top:4px;font-size:9px;color:var(--text3)}
 .attacks-section{margin-top:14px}
 .section-title{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:7px}
 .attack{margin-bottom:7px;font-size:12px}
@@ -370,25 +164,16 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 .atk-dmg{margin-left:7px;color:var(--electric)}
 .atk-text{margin-top:2px;font-size:11px;color:var(--text3)}
 .modal-actions{margin-top:20px;display:flex;gap:9px;flex-wrap:wrap}
-.close-btn{
-  background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text2);
-  padding:8px 18px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.18s;
-}
+.close-btn{background:rgba(26,39,68,0.9);border:1px solid var(--border);color:var(--text2);padding:8px 18px;border-radius:8px;font-size:13px;cursor:pointer;font-family:inherit;transition:all 0.18s}
 .close-btn:hover{border-color:var(--teal);color:var(--teal)}
-.cm-link{
-  background:rgba(62,207,186,0.1);border:1px solid rgba(62,207,186,0.3);color:var(--teal);
-  padding:8px 15px;border-radius:8px;font-size:13px;text-decoration:none;transition:all 0.18s;
-}
+.cm-link{background:rgba(62,207,186,0.1);border:1px solid rgba(62,207,186,0.3);color:var(--teal);padding:8px 15px;border-radius:8px;font-size:13px;text-decoration:none;transition:all 0.18s}
 .cm-link:hover{background:rgba(62,207,186,0.2);color:var(--mint)}
-
 @keyframes spin{to{transform:rotate(360deg)}}
 @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 @keyframes slideIn{from{opacity:0;transform:translateX(12px)}to{opacity:1;transform:none}}
 </style>
 </head>
 <body>
-
-<!-- Bellibolt-inspired sunray background -->
 <div class="bg-rays"></div>
 <svg class="bg-lightning" viewBox="0 0 1440 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
   <path d="M300 20 L260 200 L320 200 L230 450 L310 450 L160 820" stroke="#e8f060" stroke-width="2.5" fill="none" opacity="0.6"/>
@@ -396,17 +181,13 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
   <path d="M1200 80 L1165 260 L1215 260 L1155 460 L1220 460 L1140 700" stroke="#e8f060" stroke-width="1.5" fill="none" opacity="0.4"/>
   <path d="M500 100 L480 230 L510 230 L470 390" stroke="#aaeedd" stroke-width="1.5" fill="none" opacity="0.3"/>
   <path d="M1050 200 L1030 330 L1060 330 L1020 500" stroke="#e8f060" stroke-width="1.5" fill="none" opacity="0.35"/>
-  <path d="M100 300 L80 420 L110 420 L70 580" stroke="#aaeedd" stroke-width="1" fill="none" opacity="0.25"/>
 </svg>
 
 <div id="app">
   <header>
     <div class="logo">
       <div class="logo-icon">⚡</div>
-      <div class="logo-text">
-        <h1>IR Collection</h1>
-        <p>Pokémon Illustration Rares</p>
-      </div>
+      <div class="logo-text"><h1>IR Collection</h1><p>Pokémon Illustration Rares</p></div>
     </div>
     <div class="header-right">
       <div class="tabs">
@@ -414,22 +195,15 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
         <button class="tab" id="tab-wishlist" onclick="switchView('wishlist')">♡ Wishlist <span class="tab-badge" id="fav-count" style="display:none">0</span></button>
         <button class="tab" id="tab-collected" onclick="switchView('collected')">✓ Verzameld <span class="tab-badge gold" id="coll-count" style="display:none">0</span></button>
       </div>
-      <button class="alert-btn" id="alert-btn" onclick="toggleAlerts()" title="Prijsalerts">
-        🔔<span class="alert-dot" id="alert-dot" style="display:none"></span>
-      </button>
+      <button class="alert-btn" id="alert-btn" onclick="toggleAlerts()" title="Prijsalerts">🔔<span class="alert-dot" id="alert-dot" style="display:none"></span></button>
     </div>
   </header>
 
-  <!-- Alerts tray -->
   <div class="alerts-tray" id="alerts-tray" style="display:none">
-    <div class="alerts-header">
-      <div class="alerts-title">🔔 Prijsalerts</div>
-      <button class="alerts-close" onclick="toggleAlerts()">×</button>
-    </div>
+    <div class="alerts-header"><div class="alerts-title">🔔 Prijsalerts</div><button class="alerts-close" onclick="toggleAlerts()">×</button></div>
     <div id="alerts-content"><div class="alerts-empty">Laden…</div></div>
   </div>
 
-  <!-- Browse -->
   <div id="view-browse">
     <div class="controls">
       <div class="search-wrap">
@@ -437,9 +211,7 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
         <input type="text" id="search-input" placeholder="Zoek op naam…" oninput="onSearch()"/>
         <button class="search-clear" id="search-clear" onclick="clearSearch()">×</button>
       </div>
-      <div id="set-select-wrap">
-        <div class="sets-loading"><span class="sets-loading-dot"></span> Sets laden…</div>
-      </div>
+      <div id="set-select-wrap"><div class="sets-loading"><span class="sets-loading-dot"></span> Sets laden…</div></div>
       <span class="count-badge" id="card-count" style="display:none"></span>
     </div>
     <div id="error-box" class="error-box" style="display:none"></div>
@@ -452,12 +224,10 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
       <button class="pag-btn" id="btn-next" onclick="changePage(1)">Volgende →</button>
     </div>
   </div>
-
   <div id="view-wishlist" style="display:none"></div>
   <div id="view-collected" style="display:none"></div>
 </div>
 
-<!-- Modal -->
 <div class="modal-overlay" id="modal" style="display:none" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <img class="modal-img" id="modal-img" src="" alt="" style="display:none"/>
@@ -470,7 +240,6 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
       <div class="price-box">
         <div class="price-box-title">Marktprijs</div>
         <div id="modal-prices"><div style="font-size:12px;color:var(--text3)">Laden…</div></div>
-        <div class="price-note">Actueel bij laden · via Pokémon TCG API (Cardmarket)</div>
       </div>
       <div id="modal-attacks"></div>
       <div class="modal-actions">
@@ -482,217 +251,432 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 </div>
 
 <script>
-const S={cards:[],page:1,totalPages:1,totalCount:0,selectedSet:'all',search:'',searchTimer:null,loading:false,favorites:{},collected:{},priceHistory:{},modalCard:null,alertsOpen:false};
+// ── State ─────────────────────────────────────────────────────────
+const S = {
+  cards:[], page:1, totalPages:1, totalCount:0,
+  selectedSet:'all', search:'', searchTimer:null,
+  loading:false, modalCard:null, alertsOpen:false,
+  // Persisted state — loaded from server
+  favorites:{},   // id -> card object (wishlist)
+  collected:{},   // id -> true (collected cards)
+  cardCache:{},   // id -> card object (ALL seen cards — fixes Verzameld tab)
+  priceHistory:{}
+};
 
-async function init(){await loadUserData();updateBadges();loadSets();fetchCards();checkAlerts();}
+// ── Init ──────────────────────────────────────────────────────────
+async function init() {
+  await loadUserData();
+  updateBadges();
+  loadSets();
+  fetchCards();
+  checkAlerts();
+}
 
-async function loadSets(){
-  const wrap=document.getElementById('set-select-wrap');
-  try{
-    const r=await fetch('/api/sets');const sets=await r.json();
-    const groups={};
-    sets.forEach(s=>{const ser=s.series||'Overig';if(!groups[ser])groups[ser]=[];groups[ser].push(s);});
-    let html=`<select id="set-select" onchange="onSetChange()" style="max-width:260px"><option value="all">Alle sets (${sets.length} sets)</option>`;
-    const order=['Mega Evolution','Scarlet & Violet','Sword & Shield'];
-    const keys=[...order,...Object.keys(groups).filter(k=>!order.includes(k))];
-    keys.forEach(ser=>{
-      if(!groups[ser])return;
-      html+=`<optgroup label="── ${ser} ──">`;
-      groups[ser].forEach(s=>{html+=`<option value="${s.id}">${s.name} (${s.total} IR)</option>`;});
-      html+=`</optgroup>`;
+// ── User data ─────────────────────────────────────────────────────
+async function loadUserData() {
+  try {
+    const r = await fetch('/api/userdata');
+    const d = await r.json();
+    S.favorites    = d.favorites    || {};
+    S.collected    = d.collected    || {};
+    S.cardCache    = d.cardCache    || {};
+    S.priceHistory = d.priceHistory || {};
+  } catch {}
+}
+
+// Save only favorites (lightweight)
+async function saveFavorites() {
+  try { await fetch('/api/userdata/favorites', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(S.favorites) }); } catch {}
+}
+// Save only collected (lightweight)
+async function saveCollected() {
+  try { await fetch('/api/userdata/collected', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(S.collected) }); } catch {}
+}
+
+// ── Sets ──────────────────────────────────────────────────────────
+async function loadSets() {
+  const wrap = document.getElementById('set-select-wrap');
+  try {
+    const r = await fetch('/api/sets');
+    const sets = await r.json();
+    const groups = {};
+    sets.forEach(s => { const ser = s.series||'Overig'; if(!groups[ser]) groups[ser]=[]; groups[ser].push(s); });
+    let html = `<select id="set-select" onchange="onSetChange()" style="max-width:260px"><option value="all">Alle sets (${sets.length} sets)</option>`;
+    const order = ['Mega Evolution','Scarlet & Violet','Sword & Shield'];
+    const keys = [...order, ...Object.keys(groups).filter(k=>!order.includes(k))];
+    keys.forEach(ser => {
+      if (!groups[ser]) return;
+      html += `<optgroup label="── ${ser} ──">`;
+      groups[ser].forEach(s => { html += `<option value="${s.id}">${s.name} (${s.total} IR)</option>`; });
+      html += `</optgroup>`;
     });
-    html+='</select>';
-    wrap.innerHTML=html;
-  }catch(e){wrap.innerHTML='<select id="set-select" onchange="onSetChange()"><option value="all">Alle sets</option></select>';}
+    html += '</select>';
+    wrap.innerHTML = html;
+  } catch { wrap.innerHTML = '<select id="set-select" onchange="onSetChange()"><option value="all">Alle sets</option></select>'; }
 }
 
-async function loadUserData(){try{const r=await fetch('/api/userdata');const d=await r.json();S.favorites=d.favorites||{};S.collected=d.collected||{};S.priceHistory=d.priceHistory||{};}catch{}}
-async function saveUserData(){try{await fetch('/api/userdata',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({favorites:S.favorites,collected:S.collected,priceHistory:S.priceHistory})});}catch{}}
-
-async function checkAlerts(){
-  try{
-    const r=await fetch('/api/alerts');const alerts=await r.json();
-    const dot=document.getElementById('alert-dot');const btn=document.getElementById('alert-btn');
-    if(alerts.length>0){dot.style.display='block';btn.classList.add('has-alerts');}
-    else{dot.style.display='none';btn.classList.remove('has-alerts');}
+// ── Alerts ────────────────────────────────────────────────────────
+async function checkAlerts() {
+  try {
+    const r = await fetch('/api/alerts'); const alerts = await r.json();
+    const dot = document.getElementById('alert-dot'); const btn = document.getElementById('alert-btn');
+    if (alerts.length > 0) { dot.style.display='block'; btn.classList.add('has-alerts'); }
+    else { dot.style.display='none'; btn.classList.remove('has-alerts'); }
     renderAlerts(alerts);
-  }catch{}
+  } catch {}
 }
-function renderAlerts(alerts){
-  const el=document.getElementById('alerts-content');
-  if(!alerts.length){el.innerHTML='<div class="alerts-empty">Geen prijsalerts op dit moment</div>';return;}
-  el.innerHTML=alerts.map(a=>`<div class="alert-item">${a.cardImage?`<img class="alert-thumb" src="${a.cardImage}" alt="${esc(a.cardName)}"/>`:''}
-    <div class="alert-info"><div class="alert-name">${esc(a.cardName)}</div><div class="alert-msg">📉 ${a.dropPct}% onder lifetime gemiddelde</div>
-    <div class="alert-prices">Nu: €${a.currentPrice.toFixed(2)} · Gem: €${a.lifetimeAvg.toFixed(2)}</div></div>
-    ${a.cmUrl?`<a href="${a.cmUrl}" target="_blank" style="font-size:11px;color:var(--teal);text-decoration:none;flex-shrink:0">↗ CM</a>`:''}</div>`).join('');
+function renderAlerts(alerts) {
+  const el = document.getElementById('alerts-content');
+  if (!alerts.length) { el.innerHTML='<div class="alerts-empty">Geen prijsalerts op dit moment</div>'; return; }
+  el.innerHTML = alerts.map(a => `<div class="alert-item">
+    ${a.cardImage ? `<img class="alert-thumb" src="${a.cardImage}" alt="${esc(a.cardName)}"/>` : ''}
+    <div class="alert-info">
+      <div class="alert-name">${esc(a.cardName)}</div>
+      <div class="alert-msg">📉 ${a.dropPct}% onder lifetime gemiddelde</div>
+      <div class="alert-prices">Nu: €${a.currentPrice.toFixed(2)} · Gem: €${a.lifetimeAvg.toFixed(2)}</div>
+    </div>
+    ${a.cmUrl ? `<a href="${a.cmUrl}" target="_blank" style="font-size:11px;color:var(--teal);text-decoration:none;flex-shrink:0">↗ CM</a>` : ''}
+  </div>`).join('');
 }
-function toggleAlerts(){const tray=document.getElementById('alerts-tray');S.alertsOpen=!S.alertsOpen;tray.style.display=S.alertsOpen?'block':'none';if(S.alertsOpen)checkAlerts();}
+function toggleAlerts() { const tray=document.getElementById('alerts-tray'); S.alertsOpen=!S.alertsOpen; tray.style.display=S.alertsOpen?'block':'none'; if(S.alertsOpen) checkAlerts(); }
 
-async function fetchCards(){
-  if(S.loading)return;S.loading=true;setLoading(true);clearError();
-  try{
-    const r=await fetch(`/api/cards?set=${S.selectedSet}&page=${S.page}&pageSize=20&search=${encodeURIComponent(S.search)}`);
-    const data=await r.json();if(data.error)throw new Error(data.error);
-    S.cards=data.data||[];S.totalCount=data.totalCount||0;S.totalPages=Math.max(1,Math.ceil(S.totalCount/20));
-    renderGrid();renderPagination();
-  }catch(e){showError('Fout bij laden: '+e.message);}
-  finally{S.loading=false;setLoading(false);}
+// ── Fetch cards ───────────────────────────────────────────────────
+async function fetchCards() {
+  if (S.loading) return;
+  S.loading = true; setLoading(true); clearError();
+  try {
+    const r = await fetch(`/api/cards?set=${S.selectedSet}&page=${S.page}&pageSize=20&search=${encodeURIComponent(S.search)}`);
+    const data = await r.json();
+    if (data.error) throw new Error(data.error);
+    S.cards = data.data || [];
+    S.totalCount = data.totalCount || 0;
+    S.totalPages = Math.max(1, Math.ceil(S.totalCount / 20));
+    // Merge new cards into local cardCache
+    S.cards.forEach(card => { S.cardCache[card.id] = card; });
+    renderGrid(); renderPagination();
+  } catch(e) { showError('Fout bij laden: ' + e.message); }
+  finally { S.loading = false; setLoading(false); }
 }
 
-function renderGrid(){
-  const grid=document.getElementById('card-grid');const empty=document.getElementById('empty-msg');const countEl=document.getElementById('card-count');
-  if(S.totalCount>0){countEl.textContent=`${S.totalCount} kaarten`;countEl.style.display='inline';}else countEl.style.display='none';
-  if(!S.cards.length){grid.innerHTML='';empty.style.display='block';return;}
-  empty.style.display='none';
-  grid.innerHTML=S.cards.map((card,i)=>{
-    const img=card.images?.small||'';const isFav=!!S.favorites[card.id];const isColl=!!S.collected[card.id];
-    const price=getTrendPrice(card);const cmUrl=card.cardmarket?.url||'';
+// ── Grid ──────────────────────────────────────────────────────────
+function renderGrid() {
+  const grid = document.getElementById('card-grid');
+  const empty = document.getElementById('empty-msg');
+  const countEl = document.getElementById('card-count');
+  if (S.totalCount > 0) { countEl.textContent=`${S.totalCount} kaarten`; countEl.style.display='inline'; }
+  else countEl.style.display = 'none';
+  if (!S.cards.length) { grid.innerHTML=''; empty.style.display='block'; return; }
+  empty.style.display = 'none';
+  grid.innerHTML = S.cards.map((card, i) => {
+    const img = card.images?.small || '';
+    const isFav = !!S.favorites[card.id];
+    const isColl = !!S.collected[card.id];
+    const { price, source } = getPriceInfo(card);
+    const cmUrl = card.cardmarket?.url || '';
+    const currency = source === 'tcgplayer' ? '$' : '€';
     return `<div class="card-tile${isColl?' is-collected':''}" style="animation-delay:${i*16}ms" onclick="openModal('${card.id}')">
       <div class="card-actions">
         <button class="action-btn fav-btn${isFav?' active':''}" onclick="event.stopPropagation();toggleFav('${card.id}')" title="${isFav?'Verwijder uit wishlist':'Voeg toe aan wishlist'}">${isFav?'♥':'♡'}</button>
         <button class="action-btn collect-btn${isColl?' active':''}" onclick="event.stopPropagation();toggleCollected('${card.id}')" title="${isColl?'Markeer als niet-verzameld':'Markeer als verzameld'}">✓</button>
       </div>
-      ${isColl?'<div class="collected-badge">Verzameld ✓</div>':''}
-      ${img?`<img src="${img}" alt="${esc(card.name)}" loading="lazy"/>`:`<div class="card-no-img">Geen afbeelding</div>`}
+      ${isColl ? '<div class="collected-badge">Verzameld ✓</div>' : ''}
+      ${img ? `<img src="${img}" alt="${esc(card.name)}" loading="lazy"/>` : `<div class="card-no-img">Geen afbeelding</div>`}
       <div class="card-info">
         <div class="card-name">${esc(card.name)}</div>
         <div class="card-meta">${esc(card.set?.name||'')} · #${esc(card.number)}</div>
         <div class="card-price${price==null?' no-price':''}">
-          ${price!=null
-            ?((cmUrl?`<a href="${cmUrl}" target="_blank" onclick="event.stopPropagation()">€${price.toFixed(2)}</a>`:`€${price.toFixed(2)}`)+`<span class="price-label">trend</span>`)
-            :'—'}
+          ${price != null
+            ? (cmUrl ? `<a href="${cmUrl}" target="_blank" onclick="event.stopPropagation()">${currency}${price.toFixed(2)}</a>` : `${currency}${price.toFixed(2)}`) + `<span class="price-label">${source==='tcgplayer'?'TCGPlayer':'trend'}</span>`
+            : '—'}
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-function renderPagination(){
-  const pag=document.getElementById('pagination');
-  if(S.totalPages<=1){pag.style.display='none';return;}
-  pag.style.display='flex';
-  document.getElementById('page-info').textContent=`${S.page} / ${S.totalPages}`;
-  document.getElementById('btn-prev').disabled=S.page===1;
-  document.getElementById('btn-next').disabled=S.page===S.totalPages;
+// ── Pagination ────────────────────────────────────────────────────
+function renderPagination() {
+  const pag = document.getElementById('pagination');
+  if (S.totalPages <= 1) { pag.style.display='none'; return; }
+  pag.style.display = 'flex';
+  document.getElementById('page-info').textContent = `${S.page} / ${S.totalPages}`;
+  document.getElementById('btn-prev').disabled = S.page === 1;
+  document.getElementById('btn-next').disabled = S.page === S.totalPages;
 }
-function changePage(dir){const np=S.page+dir;if(np<1||np>S.totalPages)return;S.page=np;window.scrollTo({top:0,behavior:'smooth'});fetchCards();}
-function onSearch(){const val=document.getElementById('search-input').value;document.getElementById('search-clear').style.display=val?'block':'none';clearTimeout(S.searchTimer);S.searchTimer=setTimeout(()=>{S.search=val;S.page=1;fetchCards();},400);}
-function clearSearch(){document.getElementById('search-input').value='';document.getElementById('search-clear').style.display='none';S.search='';S.page=1;fetchCards();}
-function onSetChange(){S.selectedSet=document.getElementById('set-select').value;S.page=1;fetchCards();}
+function changePage(dir) { const np=S.page+dir; if(np<1||np>S.totalPages) return; S.page=np; window.scrollTo({top:0,behavior:'smooth'}); fetchCards(); }
+function onSearch() { const val=document.getElementById('search-input').value; document.getElementById('search-clear').style.display=val?'block':'none'; clearTimeout(S.searchTimer); S.searchTimer=setTimeout(()=>{ S.search=val; S.page=1; fetchCards(); },400); }
+function clearSearch() { document.getElementById('search-input').value=''; document.getElementById('search-clear').style.display='none'; S.search=''; S.page=1; fetchCards(); }
+function onSetChange() { S.selectedSet=document.getElementById('set-select').value; S.page=1; fetchCards(); }
 
-function toggleFav(cardId){
-  const card=S.cards.find(c=>c.id===cardId)||S.favorites[cardId];if(!card)return;
-  if(S.favorites[cardId])delete S.favorites[cardId];else S.favorites[cardId]=card;
-  saveUserData();updateBadges();renderGrid();if(S.modalCard?.id===cardId)updateModalFavBtn();
+// ── Favorites ─────────────────────────────────────────────────────
+function toggleFav(cardId) {
+  const card = S.cardCache[cardId] || S.cards.find(c => c.id === cardId);
+  if (!card) return;
+  if (S.favorites[cardId]) delete S.favorites[cardId];
+  else S.favorites[cardId] = card;
+  saveFavorites(); updateBadges(); renderGrid();
+  if (S.modalCard?.id === cardId) updateModalFavBtn();
 }
-function toggleModalFav(){if(!S.modalCard)return;toggleFav(S.modalCard.id);}
-function updateModalFavBtn(){const btn=document.getElementById('modal-fav-btn');const isFav=!!S.favorites[S.modalCard?.id];btn.textContent=isFav?'♥ In wishlist':'♡ Wishlist';btn.className='modal-fav-btn'+(isFav?' active':'');}
-function toggleCollected(cardId){
-  S.collected[cardId]=!S.collected[cardId];if(!S.collected[cardId])delete S.collected[cardId];
-  saveUserData();updateBadges();renderGrid();
-}
-function toggleCollectedById(cardId){S.collected[cardId]=!S.collected[cardId];if(!S.collected[cardId])delete S.collected[cardId];saveUserData();updateBadges();}
-function updateBadges(){
-  const fc=Object.keys(S.favorites).length;const cc=Object.keys(S.collected).length;
-  const fb=document.getElementById('fav-count');const cb=document.getElementById('coll-count');
-  fb.textContent=fc;fb.style.display=fc>0?'inline':'none';cb.textContent=cc;cb.style.display=cc>0?'inline':'none';
-}
-
-function switchView(v){
-  ['browse','wishlist','collected'].forEach(n=>{document.getElementById('view-'+n).style.display=v===n?'block':'none';document.getElementById('tab-'+n).className='tab'+(v===n?' active':'');});
-  if(v==='wishlist')renderListView('wishlist');if(v==='collected')renderListView('collected');
+function toggleModalFav() { if (!S.modalCard) return; toggleFav(S.modalCard.id); }
+function updateModalFavBtn() {
+  const btn = document.getElementById('modal-fav-btn');
+  const isFav = !!S.favorites[S.modalCard?.id];
+  btn.textContent = isFav ? '♥ In wishlist' : '♡ Wishlist';
+  btn.className = 'modal-fav-btn' + (isFav ? ' active' : '');
 }
 
-function renderListView(type){
-  const view=document.getElementById('view-'+type);const isWish=type==='wishlist';
-  const items=isWish?Object.values(S.favorites):Object.keys(S.collected).map(id=>S.favorites[id]||S.cards.find(c=>c.id===id)).filter(Boolean);
-  if(!items.length){view.innerHTML=`<div class="wish-empty"><div class="wish-empty-icon">${isWish?'♡':'✓'}</div><p>${isWish?'Nog geen favorieten':'Nog niets verzameld'}</p><small>${isWish?'Klik ♡ op een kaart om hem toe te voegen':'Klik ✓ op een kaart om hem te markeren'}</small></div>`;return;}
-  const getP=c=>{const cm=c?.cardmarket?.prices;if(cm)return cm.trendPrice??cm.avg30??null;const t=c?.tcgplayer?.prices;if(t){const v=t.holofoil||t.normal||Object.values(t)[0];return v?.market??null;}return null;};
-  const total=items.reduce((s,c)=>s+(getP(c)??0),0);
-  const collItems=items.filter(c=>S.collected[c.id]);
-  const collTotal=collItems.reduce((s,c)=>s+(getP(c)??0),0);
-  const pct=items.length?(collItems.length/items.length)*100:0;
-  view.innerHTML=`
+// ── Collected ─────────────────────────────────────────────────────
+function toggleCollected(cardId) {
+  if (S.collected[cardId]) delete S.collected[cardId];
+  else S.collected[cardId] = true;
+  saveCollected(); updateBadges(); renderGrid();
+}
+function toggleCollectedById(cardId) {
+  if (S.collected[cardId]) delete S.collected[cardId];
+  else S.collected[cardId] = true;
+  saveCollected(); updateBadges();
+}
+
+function updateBadges() {
+  const fc = Object.keys(S.favorites).length;
+  const cc = Object.keys(S.collected).length;
+  const fb = document.getElementById('fav-count'); const cb = document.getElementById('coll-count');
+  fb.textContent=fc; fb.style.display=fc>0?'inline':'none';
+  cb.textContent=cc; cb.style.display=cc>0?'inline':'none';
+}
+
+// ── Views ─────────────────────────────────────────────────────────
+function switchView(v) {
+  ['browse','wishlist','collected'].forEach(n => {
+    document.getElementById('view-'+n).style.display = v===n ? 'block' : 'none';
+    document.getElementById('tab-'+n).className = 'tab' + (v===n ? ' active' : '');
+  });
+  if (v==='wishlist') renderListView('wishlist');
+  if (v==='collected') renderListView('collected');
+}
+
+function renderListView(type) {
+  const view = document.getElementById('view-'+type);
+  const isWish = type === 'wishlist';
+
+  let items;
+  if (isWish) {
+    items = Object.values(S.favorites);
+  } else {
+    // FIX: Use cardCache to look up ALL collected cards, not just current page
+    items = Object.keys(S.collected).map(id => {
+      // Priority: favorites > cardCache > nothing
+      return S.favorites[id] || S.cardCache[id] || null;
+    }).filter(Boolean);
+  }
+
+  if (!items.length) {
+    view.innerHTML = `<div class="wish-empty">
+      <div class="wish-empty-icon">${isWish?'♡':'✓'}</div>
+      <p>${isWish?'Nog geen favorieten':'Nog niets verzameld'}</p>
+      <small>${isWish?'Klik ♡ op een kaart om hem toe te voegen':'Klik ✓ op een kaart om hem te markeren'}</small>
+    </div>`;
+    return;
+  }
+
+  const total = items.reduce((s,c) => s + (getPriceInfo(c).price ?? 0), 0);
+  const collItems = items.filter(c => S.collected[c.id]);
+  const collTotal = collItems.reduce((s,c) => s + (getPriceInfo(c).price ?? 0), 0);
+  const pct = items.length ? (collItems.length / items.length) * 100 : 0;
+
+  view.innerHTML = `
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">${isWish?'Totaal wishlist':'Totaal verzameld'}</div><div class="stat-value">${fmtPrice(total)}</div><div class="stat-sub">${items.length} kaarten</div></div>
-      ${isWish?`<div class="stat-card"><div class="stat-label">Gecollect</div><div class="stat-value green">${fmtPrice(collTotal)}</div><div class="stat-sub">${collItems.length} kaarten</div></div>
-      <div class="stat-card"><div class="stat-label">Nog te halen</div><div class="stat-value teal">${fmtPrice(total-collTotal)}</div><div class="stat-sub">${items.length-collItems.length} kaarten</div></div>`:''}
+      <div class="stat-card">
+        <div class="stat-label">${isWish?'Totaal wishlist':'Totaal verzameld'}</div>
+        <div class="stat-value">${fmtPrice(total)}</div>
+        <div class="stat-sub">${items.length} kaarten</div>
+      </div>
+      ${isWish ? `
+      <div class="stat-card">
+        <div class="stat-label">Gecollect</div>
+        <div class="stat-value green">${fmtPrice(collTotal)}</div>
+        <div class="stat-sub">${collItems.length} kaarten</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Nog te halen</div>
+        <div class="stat-value teal">${fmtPrice(total-collTotal)}</div>
+        <div class="stat-sub">${items.length-collItems.length} kaarten</div>
+      </div>` : ''}
     </div>
-    ${isWish?`<div class="progress-row"><span>Voortgang</span><span>${collItems.length}/${items.length}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`:''}
+    ${isWish ? `
+    <div class="progress-row"><span>Voortgang</span><span>${collItems.length}/${items.length}</span></div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>` : ''}
     <div class="list-rows">
-      ${items.map(card=>{
-        const isC=!!S.collected[card.id];const price=getP(card);const cmUrl=card?.cardmarket?.url||'';const img=card?.images?.small||'';
+      ${items.map(card => {
+        const isC = !!S.collected[card.id];
+        const { price, source } = getPriceInfo(card);
+        const cmUrl = card?.cardmarket?.url || '';
+        const img = card?.images?.small || '';
+        const currency = source === 'tcgplayer' ? '$' : '€';
         return `<div class="list-row${isC?' collected':''}" id="lr-${card.id}">
-          ${isWish?`<button class="check-btn${isC?' checked':''}" onclick="toggleCollectedInList('${card.id}','${type}')">${isC?'✓':''}</button>`:''}
-          ${img?`<img class="row-thumb" src="${img}" alt="${esc(card.name)}" onclick="openModalFromList('${card.id}')"/>`:'<div style="width:42px;height:58px;border-radius:6px;background:rgba(26,39,68,0.6);flex-shrink:0"></div>'}
+          ${isWish ? `<button class="check-btn${isC?' checked':''}" onclick="toggleCollectedInList('${card.id}','${type}')">${isC?'✓':''}</button>` : ''}
+          ${img ? `<img class="row-thumb" src="${img}" alt="${esc(card.name)}" onclick="openModalFromList('${card.id}')"/>` : '<div style="width:42px;height:58px;border-radius:6px;background:rgba(26,39,68,0.6);flex-shrink:0"></div>'}
           <div class="row-info" onclick="openModalFromList('${card.id}')">
             <div class="row-name">${esc(card.name)}</div>
             <div class="row-meta">${esc(card?.set?.name||'')} · #${esc(card?.number||'')}${card?.artist?` · 🎨 ${esc(card.artist)}`:''}</div>
           </div>
           <div class="row-price">
-            <div class="row-price-val${price==null?' no-price':''}">${price!=null?(cmUrl?`<a href="${cmUrl}" target="_blank">€${price.toFixed(2)}</a>`:`€${price.toFixed(2)}`):'—'}</div>
-            ${price!=null?'<div class="row-price-sub">trend</div>':''}
+            <div class="row-price-val${price==null?' no-price':''}">
+              ${price!=null ? (cmUrl?`<a href="${cmUrl}" target="_blank">${currency}${price.toFixed(2)}</a>`:`${currency}${price.toFixed(2)}`) : '—'}
+            </div>
+            ${price!=null ? `<div class="row-price-sub">${source==='tcgplayer'?'TCGPlayer (USD)':'trend CM'}</div>` : ''}
           </div>
-          ${isWish?`<button class="remove-btn" onclick="removeFav('${card.id}')">×</button>`:''}
+          ${isWish ? `<button class="remove-btn" onclick="removeFav('${card.id}')">×</button>` : ''}
         </div>`;
       }).join('')}
     </div>
-    <div class="list-note">Trendprijzen via Pokémon TCG API (Cardmarket) · actueel bij laden</div>`;
+    <div class="list-note">Prijzen via Pokémon TCG API · Cardmarket (€) of TCGPlayer (USD) als fallback</div>`;
 }
 
-function toggleCollectedInList(cardId,type){toggleCollectedById(cardId);renderListView(type);if(document.getElementById('view-browse').style.display!=='none')renderGrid();}
-function removeFav(cardId){delete S.favorites[cardId];saveUserData();updateBadges();renderListView('wishlist');if(document.getElementById('view-browse').style.display!=='none')renderGrid();}
-async function openModalFromList(cardId){
-  const card=S.favorites[cardId]||S.cards.find(c=>c.id===cardId);
-  if(!card){try{const r=await fetch(`/api/cards/${cardId}`);const d=await r.json();if(d.data){S.cards.push(d.data);await openModal(cardId);}}catch{}return;}
-  if(!S.cards.find(c=>c.id===cardId))S.cards.push(card);await openModal(cardId);
+function toggleCollectedInList(cardId, type) {
+  toggleCollectedById(cardId);
+  renderListView(type);
+  if (document.getElementById('view-browse').style.display !== 'none') renderGrid();
+}
+function removeFav(cardId) {
+  delete S.favorites[cardId];
+  saveFavorites(); updateBadges(); renderListView('wishlist');
+  if (document.getElementById('view-browse').style.display !== 'none') renderGrid();
+}
+async function openModalFromList(cardId) {
+  const card = S.favorites[cardId] || S.cardCache[cardId] || S.cards.find(c => c.id === cardId);
+  if (!card) {
+    try {
+      const r = await fetch(`/api/cards/${cardId}`);
+      const d = await r.json();
+      if (d.data) { S.cardCache[d.data.id] = d.data; S.cards.push(d.data); await openModal(cardId); }
+    } catch {}
+    return;
+  }
+  if (!S.cards.find(c => c.id === cardId)) S.cards.push(card);
+  await openModal(cardId);
 }
 
-async function openModal(cardId){
-  const card=S.cards.find(c=>c.id===cardId)||S.favorites[cardId];if(!card)return;
-  S.modalCard=card;document.getElementById('modal').style.display='flex';
-  document.getElementById('modal-name').textContent=card.name;
-  document.getElementById('modal-sub').textContent=`${card.set?.name||''} · #${card.number} · ${card.rarity||''}`;
+// ── Modal ─────────────────────────────────────────────────────────
+async function openModal(cardId) {
+  const card = S.cardCache[cardId] || S.cards.find(c => c.id === cardId) || S.favorites[cardId];
+  if (!card) return;
+  S.modalCard = card;
+  document.getElementById('modal').style.display = 'flex';
+  document.getElementById('modal-name').textContent = card.name;
+  document.getElementById('modal-sub').textContent = `${card.set?.name||''} · #${card.number} · ${card.rarity||''}`;
   updateModalFavBtn();
-  const imgEl=document.getElementById('modal-img');const src=card.images?.large||card.images?.small||'';
-  if(src){imgEl.src=src;imgEl.style.display='block';}else imgEl.style.display='none';
-  document.getElementById('modal-info').innerHTML=[card.artist?ir('Illustrator',card.artist):'',card.subtypes?.length?ir('Subtype',card.subtypes.join(', ')):'',card.types?.length?ir('Type',card.types.join(', ')):'',card.hp?ir('HP',card.hp):''].join('');
-  document.getElementById('modal-prices').innerHTML='<div style="font-size:12px;color:var(--text3)">Laden…</div>';
-  document.getElementById('modal-attacks').innerHTML='';document.getElementById('modal-cm-link').style.display='none';
-  try{
-    const r=await fetch(`/api/cards/${cardId}`);const d=await r.json();const full=d.data||card;
-    S.modalCard=full;const idx=S.cards.findIndex(c=>c.id===cardId);if(idx>-1)S.cards[idx]=full;
-    if(S.favorites[cardId])S.favorites[cardId]=full;updateModalFavBtn();
-    if(full.images?.large)imgEl.src=full.images.large;
-    const cm=full.cardmarket?.prices;const tcg=full.tcgplayer?.prices;const cmUrl=full.cardmarket?.url||'';
-    let ph='';
-    if(cm){
-      ph=`<div class="price-grid">
-        ${cm.trendPrice!=null?`<div class="ps hi"><div class="ps-label">Trendprijs</div><div class="ps-value">${cmUrl?`<a href="${cmUrl}" target="_blank">€${cm.trendPrice.toFixed(2)}</a>`:`€${cm.trendPrice.toFixed(2)}`}</div></div>`:''}
-        ${cm.avg30!=null?`<div class="ps"><div class="ps-label">30-daags gemiddelde</div><div class="ps-value">€${cm.avg30.toFixed(2)}</div></div>`:''}
-        ${cm.averageSellPrice!=null?`<div class="ps"><div class="ps-label">Gem. verkoop</div><div class="ps-value">€${cm.averageSellPrice.toFixed(2)}</div></div>`:''}
-        ${cm.lowPrice!=null?`<div class="ps"><div class="ps-label">Laagste prijs</div><div class="ps-value">€${cm.lowPrice.toFixed(2)}</div></div>`:''}
+  const imgEl = document.getElementById('modal-img');
+  const src = card.images?.large || card.images?.small || '';
+  if (src) { imgEl.src=src; imgEl.style.display='block'; } else imgEl.style.display='none';
+  document.getElementById('modal-info').innerHTML = [
+    card.artist ? ir('Illustrator', card.artist) : '',
+    card.subtypes?.length ? ir('Subtype', card.subtypes.join(', ')) : '',
+    card.types?.length ? ir('Type', card.types.join(', ')) : '',
+    card.hp ? ir('HP', card.hp) : '',
+  ].join('');
+  document.getElementById('modal-prices').innerHTML = '<div style="font-size:12px;color:var(--text3)">Laden…</div>';
+  document.getElementById('modal-attacks').innerHTML = '';
+  document.getElementById('modal-cm-link').style.display = 'none';
+
+  try {
+    const r = await fetch(`/api/cards/${cardId}`);
+    const d = await r.json();
+    const full = d.data || card;
+    S.modalCard = full;
+    S.cardCache[full.id] = full;
+    const idx = S.cards.findIndex(c => c.id === cardId);
+    if (idx > -1) S.cards[idx] = full;
+    if (S.favorites[cardId]) S.favorites[cardId] = full;
+    updateModalFavBtn();
+    if (full.images?.large) imgEl.src = full.images.large;
+
+    // ── Price display — FIX: check for actual values, not just object existence ──
+    const cm = full.cardmarket?.prices;
+    const tcg = full.tcgplayer?.prices;
+    const cmUrl = full.cardmarket?.url || '';
+    const hasCm = cm && (cm.trendPrice != null || cm.avg30 != null || cm.averageSellPrice != null || cm.lowPrice != null);
+
+    let ph = '';
+    if (hasCm) {
+      ph = `<div class="price-grid">
+        ${cm.trendPrice!=null ? `<div class="ps hi"><div class="ps-label">Trendprijs</div><div class="ps-value">${cmUrl?`<a href="${cmUrl}" target="_blank">€${cm.trendPrice.toFixed(2)}</a>`:`€${cm.trendPrice.toFixed(2)}`}</div></div>` : ''}
+        ${cm.avg30!=null ? `<div class="ps"><div class="ps-label">30-daags gemiddelde</div><div class="ps-value">€${cm.avg30.toFixed(2)}</div></div>` : ''}
+        ${cm.averageSellPrice!=null ? `<div class="ps"><div class="ps-label">Gem. verkoop</div><div class="ps-value">€${cm.averageSellPrice.toFixed(2)}</div></div>` : ''}
+        ${cm.lowPrice!=null ? `<div class="ps"><div class="ps-label">Laagste prijs</div><div class="ps-value">€${cm.lowPrice.toFixed(2)}</div></div>` : ''}
+      </div>
+      <div class="price-source">📊 Bron: Cardmarket (EUR)</div>`;
+      if (cmUrl) { document.getElementById('modal-cm-link').href=cmUrl; document.getElementById('modal-cm-link').style.display='inline'; }
+    } else if (tcg) {
+      // Cardmarket unavailable for this set — fall back to TCGPlayer
+      const holo = tcg.holofoil;
+      const norm = tcg.normal;
+      const rev  = tcg.reverseHolofoil;
+      const any  = holo || norm || rev || Object.values(tcg)[0];
+      const rows = [];
+      if (holo?.market != null) rows.push({label:'Holofoil marktprijs', val:holo.market, hi:true});
+      if (holo?.low   != null) rows.push({label:'Holofoil laagste',    val:holo.low});
+      if (norm?.market != null && !holo) rows.push({label:'Normaal marktprijs', val:norm.market, hi:true});
+      if (norm?.low   != null && !holo) rows.push({label:'Normaal laagste',    val:norm.low});
+      if (!rows.length && any?.market != null) rows.push({label:'Marktprijs', val:any.market, hi:true});
+      if (rows.length) {
+        ph = `<div class="price-grid">${rows.map(v=>`<div class="ps${v.hi?' hi':''}"><div class="ps-label">${v.label}</div><div class="ps-value">$${v.val.toFixed(2)}</div></div>`).join('')}</div>
+        <div class="price-source">📊 Bron: TCGPlayer (USD) — Cardmarket niet beschikbaar voor deze set</div>`;
+        if (cmUrl) { document.getElementById('modal-cm-link').href=cmUrl; document.getElementById('modal-cm-link').style.display='inline'; }
+      } else {
+        ph = '<div style="font-size:12px;color:var(--text3)">Geen prijsdata beschikbaar</div>';
+      }
+    } else {
+      ph = '<div style="font-size:12px;color:var(--text3)">Geen prijsdata beschikbaar</div>';
+    }
+    document.getElementById('modal-prices').innerHTML = ph;
+
+    if (full.attacks?.length) {
+      document.getElementById('modal-attacks').innerHTML = `<div class="attacks-section">
+        <div class="section-title">Aanvallen</div>
+        ${full.attacks.map(a => `<div class="attack">
+          <span class="atk-name">${esc(a.name)}</span>
+          ${a.damage ? `<span class="atk-dmg">${esc(a.damage)}</span>` : ''}
+          ${a.text ? `<div class="atk-text">${esc(a.text)}</div>` : ''}
+        </div>`).join('')}
       </div>`;
-      if(cmUrl){document.getElementById('modal-cm-link').href=cmUrl;document.getElementById('modal-cm-link').style.display='inline';}
-    }else if(tcg){const v=tcg.holofoil||tcg.normal||Object.values(tcg)[0];ph=v?.market!=null?`<div class="price-grid"><div class="ps hi"><div class="ps-label">Marktprijs (TCGPlayer)</div><div class="ps-value">€${v.market.toFixed(2)}</div></div></div>`:'<div style="font-size:12px;color:var(--text3)">Geen prijsdata</div>';}
-    else ph='<div style="font-size:12px;color:var(--text3)">Geen prijsdata beschikbaar</div>';
-    document.getElementById('modal-prices').innerHTML=ph;
-    if(full.attacks?.length){document.getElementById('modal-attacks').innerHTML=`<div class="attacks-section"><div class="section-title">Aanvallen</div>${full.attacks.map(a=>`<div class="attack"><span class="atk-name">${esc(a.name)}</span>${a.damage?`<span class="atk-dmg">${esc(a.damage)}</span>`:''} ${a.text?`<div class="atk-text">${esc(a.text)}</div>`:''}</div>`).join('')}</div>`;}
-    document.getElementById('modal-info').innerHTML=[full.artist?ir('Illustrator',full.artist):'',full.subtypes?.length?ir('Subtype',full.subtypes.join(', ')):'',full.types?.length?ir('Type',full.types.join(', ')):'',full.hp?ir('HP',full.hp):''].join('');
-  }catch(e){document.getElementById('modal-prices').innerHTML='<div style="font-size:12px;color:var(--text3)">Kon details niet laden</div>';}
+    }
+    document.getElementById('modal-info').innerHTML = [
+      full.artist ? ir('Illustrator', full.artist) : '',
+      full.subtypes?.length ? ir('Subtype', full.subtypes.join(', ')) : '',
+      full.types?.length ? ir('Type', full.types.join(', ')) : '',
+      full.hp ? ir('HP', full.hp) : '',
+    ].join('');
+  } catch {
+    document.getElementById('modal-prices').innerHTML = '<div style="font-size:12px;color:var(--text3)">Kon details niet laden</div>';
+  }
 }
-function closeModal(){document.getElementById('modal').style.display='none';S.modalCard=null;}
+function closeModal() { document.getElementById('modal').style.display='none'; S.modalCard=null; }
 
-function getTrendPrice(card){return card?.cardmarket?.prices?.trendPrice??card?.cardmarket?.prices?.avg30??card?.tcgplayer?.prices?.holofoil?.market??card?.tcgplayer?.prices?.normal?.market??null;}
-function fmtPrice(p){return p!=null?'€'+Number(p).toFixed(2):'—';}
-function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
-function ir(l,v){return `<div class="info-row"><span class="info-label">${esc(l)}</span><span class="info-value">${esc(v)}</span></div>`;}
-function setLoading(on){document.getElementById('spinner').style.display=on?'flex':'none';document.getElementById('card-grid').style.display=on?'none':'grid';}
-function showError(msg){const el=document.getElementById('error-box');el.textContent=msg;el.style.display='block';}
-function clearError(){document.getElementById('error-box').style.display='none';}
+// ── Helpers ───────────────────────────────────────────────────────
+function getPriceInfo(card) {
+  const cm = card?.cardmarket?.prices;
+  if (cm) {
+    const p = cm.trendPrice ?? cm.avg30 ?? cm.averageSellPrice ?? null;
+    if (p != null) return { price: p, source: 'cardmarket' };
+  }
+  const tcg = card?.tcgplayer?.prices;
+  if (tcg) {
+    const v = tcg.holofoil ?? tcg.reverseHolofoil ?? tcg.normal ?? Object.values(tcg)[0];
+    const p = v?.market ?? v?.mid ?? null;
+    if (p != null) return { price: p, source: 'tcgplayer' };
+  }
+  return { price: null, source: null };
+}
+function fmtPrice(p) { return p != null ? '€' + Number(p).toFixed(2) : '—'; }
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function ir(l, v) { return `<div class="info-row"><span class="info-label">${esc(l)}</span><span class="info-value">${esc(v)}</span></div>`; }
+function setLoading(on) { document.getElementById('spinner').style.display=on?'flex':'none'; document.getElementById('card-grid').style.display=on?'none':'grid'; }
+function showError(msg) { const el=document.getElementById('error-box'); el.textContent=msg; el.style.display='block'; }
+function clearError() { document.getElementById('error-box').style.display='none'; }
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();if(S.alertsOpen)toggleAlerts();}});
-document.addEventListener('click',e=>{const tray=document.getElementById('alerts-tray');const btn=document.getElementById('alert-btn');if(S.alertsOpen&&!tray.contains(e.target)&&!btn.contains(e.target))toggleAlerts();});
+document.addEventListener('keydown', e => { if(e.key==='Escape') { closeModal(); if(S.alertsOpen) toggleAlerts(); } });
+document.addEventListener('click', e => { const tray=document.getElementById('alerts-tray'); const btn=document.getElementById('alert-btn'); if(S.alertsOpen&&!tray.contains(e.target)&&!btn.contains(e.target)) toggleAlerts(); });
 init();
 </script>
 </body>
