@@ -77,6 +77,16 @@ async function checkSetForIR(setId, rarity = 'Illustration Rare') {
   return d.totalCount || 0;
 }
 
+// Promo IR sets use rarity "Promo" in the API — not "Illustration Rare" or "Black Star Promo"
+async function checkPromoSetForIR(setId) {
+  // Fetch all promos and filter client-side for those with IR-style full art
+  // The API rarity for these is simply "Promo"
+  const q = encodeURIComponent(`set.id:${setId} rarity:"Promo"`);
+  const r = await fetch(`https://api.pokemontcg.io/v2/cards?q=${q}&pageSize=1`, { headers: HEADERS });
+  const d = await r.json();
+  return d.totalCount || 0;
+}
+
 async function fetchAllIRSets() {
   const now = Date.now();
   if (setsCache && now - setsCacheTime < SETS_CACHE_TTL) return setsCache;
@@ -111,12 +121,12 @@ async function fetchAllIRSets() {
       if (i + BATCH < allSets.length) await new Promise(r => setTimeout(r, 250));
     }
 
-    // Also check known promo sets with "Black Star Promo" rarity
+    // Also check known promo sets — their rarity in the API is "Promo"
     for (const promoSet of KNOWN_PROMO_SETS) {
       try {
-        const count = await checkSetForIR(promoSet.id, 'Illustration Rare');
-        const countBSP = await checkSetForIR(promoSet.id, 'Black Star Promo');
-        const total = count + countBSP;
+        const countIR  = await checkSetForIR(promoSet.id, 'Illustration Rare');
+        const countP   = await checkPromoSetForIR(promoSet.id); // rarity:"Promo"
+        const total = countP || countIR; // prefer Promo count since that's what the API uses
         if (total > 0) {
           // Check if it's already added (some promo sets do list as IR)
           const existing = setsWithIR.find(s => s.id === promoSet.id);
@@ -161,15 +171,16 @@ app.get('/api/cards', async (req, res) => {
     let totalCount = 0;
 
     if (isPromoSet) {
-      // Fetch both IR and Black Star Promo rarity for promo sets
-      const [irRes, bspRes] = await Promise.all([
+      // Promo set IRs use rarity "Promo" in the API — fetch all three possible rarities
+      const [irRes, promoRes, bspRes] = await Promise.all([
         fetch(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`rarity:"Illustration Rare"${setFilter}${searchFilter}`)}&pageSize=250`, { headers: HEADERS }),
+        fetch(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`rarity:"Promo"${setFilter}${searchFilter}`)}&pageSize=250`, { headers: HEADERS }),
         fetch(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`rarity:"Black Star Promo"${setFilter}${searchFilter}`)}&pageSize=250`, { headers: HEADERS }),
       ]);
-      const [irData, bspData] = await Promise.all([irRes.json(), bspRes.json()]);
+      const [irData, promoData, bspData] = await Promise.all([irRes.json(), promoRes.json(), bspRes.json()]);
 
-      // Merge and deduplicate
-      const merged = [...(irData.data || []), ...(bspData.data || [])];
+      // Merge and deduplicate across all three rarities
+      const merged = [...(irData.data || []), ...(promoData.data || []), ...(bspData.data || [])];
       const seen = new Set();
       allCards = merged.filter(c => { if (seen.has(c.id)) return false; seen.add(c.id); return true; });
       allCards.sort((a, b) => parseInt(a.number) - parseInt(b.number));
