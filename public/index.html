@@ -8,8 +8,8 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
   --navy:#1a2744;--navy2:#0f1a2e;--teal:#3ecfba;--electric:#e8f060;--gold:#f5c842;
-  --gold-glow:rgba(245,200,66,0.25);--teal-glow:rgba(62,207,186,0.25);
-  --electric-glow:rgba(232,240,96,0.3);--mint:#aaeedd;--green:#56e87a;--red:#f85149;
+  --gold-glow:rgba(245,200,66,0.25);--teal-glow:rgba(62,207,186,0.25);--electric-glow:rgba(232,240,96,0.3);
+  --mint:#aaeedd;--green:#56e87a;--red:#f85149;
   --surface:rgba(255,255,255,0.06);--surface2:rgba(255,255,255,0.1);
   --border:rgba(62,207,186,0.18);--border2:rgba(232,240,96,0.15);
   --text:#e8f4f0;--text2:rgba(232,244,240,0.6);--text3:rgba(232,244,240,0.32);--radius:13px;
@@ -116,6 +116,7 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 .remove-btn{background:transparent;border:none;color:rgba(248,81,73,0.4);cursor:pointer;font-size:18px;padding:2px 5px;opacity:0;transition:opacity 0.15s}
 .list-row:hover .remove-btn{opacity:1}
 .list-note{margin-top:22px;font-size:10px;color:var(--text3);text-align:center}
+.enrich-note{margin-top:12px;font-size:11px;color:var(--text3);text-align:center;padding:8px;background:rgba(62,207,186,0.05);border-radius:8px;border:1px solid rgba(62,207,186,0.1)}
 .wish-empty{text-align:center;padding:90px 0}
 .wish-empty-icon{font-size:52px;opacity:0.15;margin-bottom:12px}
 .wish-empty p{font-size:15px;color:var(--text3)}
@@ -155,7 +156,6 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
 .ps-value a{color:inherit;text-decoration:none}
 .ps-value a:hover{text-decoration:underline;color:var(--gold)}
 .price-source{margin-top:8px;font-size:9px;color:var(--text3);padding-top:6px;border-top:1px solid rgba(255,255,255,0.05)}
-.price-note{margin-top:4px;font-size:9px;color:var(--text3)}
 .attacks-section{margin-top:14px}
 .section-title{font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:var(--text3);margin-bottom:7px}
 .attack{margin-bottom:7px;font-size:12px}
@@ -178,7 +178,6 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
   <path d="M300 20 L260 200 L320 200 L230 450 L310 450 L160 820" stroke="#e8f060" stroke-width="2.5" fill="none" opacity="0.6"/>
   <path d="M800 0 L770 160 L820 160 L760 340 L830 340 L750 560" stroke="#aaeedd" stroke-width="2" fill="none" opacity="0.5"/>
   <path d="M1200 80 L1165 260 L1215 260 L1155 460 L1220 460 L1140 700" stroke="#e8f060" stroke-width="1.5" fill="none" opacity="0.4"/>
-  <path d="M500 100 L480 230 L510 230 L470 390" stroke="#aaeedd" stroke-width="1.5" fill="none" opacity="0.3"/>
 </svg>
 <div id="app">
   <header>
@@ -195,10 +194,12 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
       <button class="alert-btn" id="alert-btn" onclick="toggleAlerts()" title="Prijsalerts">🔔<span class="alert-dot" id="alert-dot" style="display:none"></span></button>
     </div>
   </header>
+
   <div class="alerts-tray" id="alerts-tray" style="display:none">
     <div class="alerts-header"><div class="alerts-title">🔔 Prijsalerts</div><button class="alerts-close" onclick="toggleAlerts()">×</button></div>
     <div id="alerts-content"><div class="alerts-empty">Laden…</div></div>
   </div>
+
   <div id="view-browse">
     <div class="controls">
       <div class="search-wrap">
@@ -222,6 +223,7 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
   <div id="view-wishlist" style="display:none"></div>
   <div id="view-collected" style="display:none"></div>
 </div>
+
 <div class="modal-overlay" id="modal" style="display:none" onclick="closeModal()">
   <div class="modal-box" onclick="event.stopPropagation()">
     <img class="modal-img" id="modal-img" src="" alt="" style="display:none"/>
@@ -243,11 +245,45 @@ select option,select optgroup{background:#1a2744;color:var(--text)}
     </div>
   </div>
 </div>
+
 <script>
-const S={cards:[],page:1,totalPages:1,totalCount:0,selectedSet:'all',search:'',searchTimer:null,loading:false,modalCard:null,alertsOpen:false,favorites:{},collected:{},cardCache:{},priceHistory:{}};
+const S={
+  cards:[],page:1,totalPages:1,totalCount:0,
+  selectedSet:'all',search:'',searchTimer:null,
+  loading:false,modalCard:null,alertsOpen:false,
+  favorites:{},collected:{},cardCache:{},priceHistory:{}
+};
 
-async function init(){await loadUserData();updateBadges();loadSets();fetchCards();checkAlerts();}
+async function init(){
+  await loadUserData();
+  updateBadges();
+  loadSets();
+  fetchCards();
+  checkAlerts();
+  // Enrich any collected cards that are missing from cache
+  setTimeout(enrichCollected, 3000);
+}
 
+// ── Auto-enrich collected cards missing from cache ────────────────
+async function enrichCollected(){
+  try{
+    const r=await fetch('/api/enrich');
+    const d=await r.json();
+    if(d.enriched>0){
+      // Reload cardCache from server
+      const ud=await fetch('/api/userdata');
+      const data=await ud.json();
+      S.cardCache={...S.cardCache,...(data.cardCache||{})};
+      // Re-render if on collected tab
+      if(document.getElementById('view-collected').style.display!=='none')renderListView('collected');
+      if(document.getElementById('view-wishlist').style.display!=='none')renderListView('wishlist');
+    }
+    // If more still missing, try again
+    if(d.remaining>0) setTimeout(enrichCollected,5000);
+  }catch{}
+}
+
+// ── Sets ──────────────────────────────────────────────────────────
 async function loadSets(){
   const wrap=document.getElementById('set-select-wrap');
   try{
@@ -275,10 +311,18 @@ async function loadSets(){
   }catch{wrap.innerHTML='<select id="set-select" onchange="onSetChange()"><option value="all">Alle sets</option></select>';}
 }
 
-async function loadUserData(){try{const r=await fetch('/api/userdata');const d=await r.json();S.favorites=d.favorites||{};S.collected=d.collected||{};S.cardCache=d.cardCache||{};S.priceHistory=d.priceHistory||{};}catch{}}
+// ── User data ─────────────────────────────────────────────────────
+async function loadUserData(){
+  try{
+    const r=await fetch('/api/userdata');const d=await r.json();
+    S.favorites=d.favorites||{};S.collected=d.collected||{};
+    S.cardCache=d.cardCache||{};S.priceHistory=d.priceHistory||{};
+  }catch{}
+}
 async function saveFavorites(){try{await fetch('/api/userdata/favorites',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(S.favorites)});}catch{}}
 async function saveCollected(){try{await fetch('/api/userdata/collected',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(S.collected)});}catch{}}
 
+// ── Alerts ────────────────────────────────────────────────────────
 async function checkAlerts(){
   try{
     const r=await fetch('/api/alerts');const alerts=await r.json();
@@ -298,18 +342,21 @@ function renderAlerts(alerts){
 }
 function toggleAlerts(){const tray=document.getElementById('alerts-tray');S.alertsOpen=!S.alertsOpen;tray.style.display=S.alertsOpen?'block':'none';if(S.alertsOpen)checkAlerts();}
 
+// ── Fetch cards ───────────────────────────────────────────────────
 async function fetchCards(){
   if(S.loading)return;S.loading=true;setLoading(true);clearError();
   try{
     const r=await fetch(`/api/cards?set=${S.selectedSet}&page=${S.page}&pageSize=20&search=${encodeURIComponent(S.search)}`);
     const data=await r.json();if(data.error)throw new Error(data.error);
     S.cards=data.data||[];S.totalCount=data.totalCount||0;S.totalPages=Math.max(1,Math.ceil(S.totalCount/20));
+    // Merge into local cardCache (includes price data)
     S.cards.forEach(card=>{S.cardCache[card.id]=card;});
     renderGrid();renderPagination();
   }catch(e){showError('Fout bij laden: '+e.message);}
   finally{S.loading=false;setLoading(false);}
 }
 
+// ── Grid ──────────────────────────────────────────────────────────
 function renderGrid(){
   const grid=document.getElementById('card-grid');const empty=document.getElementById('empty-msg');const countEl=document.getElementById('card-count');
   if(S.totalCount>0){countEl.textContent=`${S.totalCount} kaarten`;countEl.style.display='inline';}else countEl.style.display='none';
@@ -318,7 +365,7 @@ function renderGrid(){
   grid.innerHTML=S.cards.map((card,i)=>{
     const img=card.images?.small||'';const isFav=!!S.favorites[card.id];const isColl=!!S.collected[card.id];
     const {price,source}=getPriceInfo(card);const cmUrl=card.cardmarket?.url||'';
-    const currency=source==='tcgplayer'?'$':'€';
+    const currency=source==='tcgplayer'?'$':'€';const isPromo=card.rarity==='Promo'||card.rarity==='Black Star Promo';
     return `<div class="card-tile${isColl?' is-collected':''}" style="animation-delay:${i*16}ms" onclick="openModal('${card.id}')">
       <div class="card-actions">
         <button class="action-btn fav-btn${isFav?' active':''}" onclick="event.stopPropagation();toggleFav('${card.id}')" title="${isFav?'Verwijder uit wishlist':'Voeg toe aan wishlist'}">${isFav?'♥':'♡'}</button>
@@ -328,7 +375,7 @@ function renderGrid(){
       ${img?`<img src="${img}" alt="${esc(card.name)}" loading="lazy"/>`:`<div class="card-no-img">Geen afbeelding</div>`}
       <div class="card-info">
         <div class="card-name">${esc(card.name)}</div>
-        <div class="card-meta">${esc(card.set?.name||'')} · #${esc(card.number)}${card.rarity==='Promo'||card.rarity==='Black Star Promo'?' · <span style="color:var(--electric);font-size:9px;font-weight:700">PROMO</span>':''}</div>
+        <div class="card-meta">${esc(card.set?.name||'')} · #${esc(card.number)}${isPromo?' · <span style="color:var(--electric);font-size:9px;font-weight:700">PROMO</span>':''}</div>
         <div class="card-price${price==null?' no-price':''}">
           ${price!=null?((cmUrl?`<a href="${cmUrl}" target="_blank" onclick="event.stopPropagation()">${currency}${price.toFixed(2)}</a>`:`${currency}${price.toFixed(2)}`)+`<span class="price-label">${source==='tcgplayer'?'TCGPlayer':'trend'}</span>`):'—'}
         </div>
@@ -337,6 +384,7 @@ function renderGrid(){
   }).join('');
 }
 
+// ── Pagination ────────────────────────────────────────────────────
 function renderPagination(){
   const pag=document.getElementById('pagination');
   if(S.totalPages<=1){pag.style.display='none';return;}
@@ -346,10 +394,11 @@ function renderPagination(){
   document.getElementById('btn-next').disabled=S.page===S.totalPages;
 }
 function changePage(dir){const np=S.page+dir;if(np<1||np>S.totalPages)return;S.page=np;window.scrollTo({top:0,behavior:'smooth'});fetchCards();}
-function onSearch(){const val=document.getElementById('search-input').value;document.getElementById('search-clear').style.display=val?'block':'none';clearTimeout(S.searchTimer);S.searchTimer=setTimeout(()=>{S.search=val;S.page=1;fetchCards();},400);}
+function onSearch(){const val=document.getElementById('search-input').value;document.getElementById('search-clear').style.display=val?'block':'none';clearTimeout(S.searchTimer);S.searchTimer=setTimeout(()=>{S.search=val;S.page=1;fetchCards();},500);}
 function clearSearch(){document.getElementById('search-input').value='';document.getElementById('search-clear').style.display='none';S.search='';S.page=1;fetchCards();}
 function onSetChange(){S.selectedSet=document.getElementById('set-select').value;S.page=1;fetchCards();}
 
+// ── Favorites & Collected ─────────────────────────────────────────
 function toggleFav(cardId){
   const card=S.cardCache[cardId]||S.cards.find(c=>c.id===cardId);if(!card)return;
   if(S.favorites[cardId])delete S.favorites[cardId];else S.favorites[cardId]=card;
@@ -358,39 +407,65 @@ function toggleFav(cardId){
 function toggleModalFav(){if(!S.modalCard)return;toggleFav(S.modalCard.id);}
 function updateModalFavBtn(){const btn=document.getElementById('modal-fav-btn');const isFav=!!S.favorites[S.modalCard?.id];btn.textContent=isFav?'♥ In wishlist':'♡ Wishlist';btn.className='modal-fav-btn'+(isFav?' active':'');}
 function toggleCollected(cardId){
+  const card=S.cardCache[cardId]||S.cards.find(c=>c.id===cardId);
+  // Always store card in cache when marking collected so it appears in Verzameld tab
+  if(card)S.cardCache[cardId]=card;
   if(S.collected[cardId])delete S.collected[cardId];else S.collected[cardId]=true;
   saveCollected();updateBadges();renderGrid();
 }
-function toggleCollectedById(cardId){if(S.collected[cardId])delete S.collected[cardId];else S.collected[cardId]=true;saveCollected();updateBadges();}
+function toggleCollectedById(cardId){
+  if(S.collected[cardId])delete S.collected[cardId];else S.collected[cardId]=true;
+  saveCollected();updateBadges();
+}
 function updateBadges(){
   const fc=Object.keys(S.favorites).length;const cc=Object.keys(S.collected).length;
   const fb=document.getElementById('fav-count');const cb=document.getElementById('coll-count');
   fb.textContent=fc;fb.style.display=fc>0?'inline':'none';cb.textContent=cc;cb.style.display=cc>0?'inline':'none';
 }
 
+// ── Views ─────────────────────────────────────────────────────────
 function switchView(v){
-  ['browse','wishlist','collected'].forEach(n=>{document.getElementById('view-'+n).style.display=v===n?'block':'none';document.getElementById('tab-'+n).className='tab'+(v===n?' active':'');});
-  if(v==='wishlist')renderListView('wishlist');if(v==='collected')renderListView('collected');
+  ['browse','wishlist','collected'].forEach(n=>{
+    document.getElementById('view-'+n).style.display=v===n?'block':'none';
+    document.getElementById('tab-'+n).className='tab'+(v===n?' active':'');
+  });
+  if(v==='wishlist')renderListView('wishlist');
+  if(v==='collected')renderListView('collected');
 }
 
 function renderListView(type){
   const view=document.getElementById('view-'+type);const isWish=type==='wishlist';
-  const items=isWish?Object.values(S.favorites):Object.keys(S.collected).map(id=>S.favorites[id]||S.cardCache[id]||null).filter(Boolean);
-  if(!items.length){view.innerHTML=`<div class="wish-empty"><div class="wish-empty-icon">${isWish?'♡':'✓'}</div><p>${isWish?'Nog geen favorieten':'Nog niets verzameld'}</p><small>${isWish?'Klik ♡ op een kaart om hem toe te voegen':'Klik ✓ op een kaart om hem te markeren'}</small></div>`;return;}
+
+  // Build items list — for Verzameld: use cardCache (loaded from server on init)
+  const items = isWish
+    ? Object.values(S.favorites)
+    : Object.keys(S.collected).map(id => S.favorites[id] || S.cardCache[id] || null).filter(Boolean);
+
+  const missingCount = isWish ? 0 : Object.keys(S.collected).length - items.length;
+
+  if(!items.length && missingCount===0){
+    view.innerHTML=`<div class="wish-empty"><div class="wish-empty-icon">${isWish?'♡':'✓'}</div><p>${isWish?'Nog geen favorieten':'Nog niets verzameld'}</p><small>${isWish?'Klik ♡ op een kaart om hem toe te voegen':'Klik ✓ op een kaart om hem te markeren'}</small></div>`;
+    return;
+  }
+
   const total=items.reduce((s,c)=>s+(getPriceInfo(c).price??0),0);
   const collItems=items.filter(c=>S.collected[c.id]);
   const collTotal=collItems.reduce((s,c)=>s+(getPriceInfo(c).price??0),0);
   const pct=items.length?(collItems.length/items.length)*100:0;
+
   view.innerHTML=`
     <div class="stats-grid">
-      <div class="stat-card"><div class="stat-label">${isWish?'Totaal wishlist':'Totaal verzameld'}</div><div class="stat-value">${fmtPrice(total)}</div><div class="stat-sub">${items.length} kaarten</div></div>
-      ${isWish?`<div class="stat-card"><div class="stat-label">Gecollect</div><div class="stat-value green">${fmtPrice(collTotal)}</div><div class="stat-sub">${collItems.length} kaarten</div></div>
+      <div class="stat-card"><div class="stat-label">${isWish?'Totaal wishlist':'Totaal verzameld'}</div><div class="stat-value">${fmtPrice(total)}</div><div class="stat-sub">${Object.keys(isWish?S.favorites:S.collected).length} kaarten</div></div>
+      ${isWish?`
+      <div class="stat-card"><div class="stat-label">Gecollect</div><div class="stat-value green">${fmtPrice(collTotal)}</div><div class="stat-sub">${collItems.length} kaarten</div></div>
       <div class="stat-card"><div class="stat-label">Nog te halen</div><div class="stat-value teal">${fmtPrice(total-collTotal)}</div><div class="stat-sub">${items.length-collItems.length} kaarten</div></div>`:''}
     </div>
     ${isWish?`<div class="progress-row"><span>Voortgang</span><span>${collItems.length}/${items.length}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>`:''}
+    ${missingCount>0?`<div class="enrich-note">⏳ ${missingCount} kaart${missingCount>1?'en worden':' wordt'} nog geladen uit de database…</div>`:''}
     <div class="list-rows">
       ${items.map(card=>{
-        const isC=!!S.collected[card.id];const {price,source}=getPriceInfo(card);const cmUrl=card?.cardmarket?.url||'';const img=card?.images?.small||'';
+        const isC=!!S.collected[card.id];const {price,source}=getPriceInfo(card);
+        const cmUrl=card?.cardmarket?.url||'';const img=card?.images?.small||'';
         const currency=source==='tcgplayer'?'$':'€';
         return `<div class="list-row${isC?' collected':''}" id="lr-${card.id}">
           ${isWish?`<button class="check-btn${isC?' checked':''}" onclick="toggleCollectedInList('${card.id}','${type}')">${isC?'✓':''}</button>`:''}
@@ -412,12 +487,18 @@ function renderListView(type){
 
 function toggleCollectedInList(cardId,type){toggleCollectedById(cardId);renderListView(type);if(document.getElementById('view-browse').style.display!=='none')renderGrid();}
 function removeFav(cardId){delete S.favorites[cardId];saveFavorites();updateBadges();renderListView('wishlist');if(document.getElementById('view-browse').style.display!=='none')renderGrid();}
+
 async function openModalFromList(cardId){
   const card=S.favorites[cardId]||S.cardCache[cardId]||S.cards.find(c=>c.id===cardId);
-  if(!card){try{const r=await fetch(`/api/cards/${cardId}`);const d=await r.json();if(d.data){S.cardCache[d.data.id]=d.data;S.cards.push(d.data);await openModal(cardId);}}catch{}return;}
-  if(!S.cards.find(c=>c.id===cardId))S.cards.push(card);await openModal(cardId);
+  if(!card){
+    try{const r=await fetch(`/api/cards/${cardId}`);const d=await r.json();if(d.data){S.cardCache[d.data.id]=d.data;S.cards.push(d.data);await openModal(cardId);}}catch{}
+    return;
+  }
+  if(!S.cards.find(c=>c.id===cardId))S.cards.push(card);
+  await openModal(cardId);
 }
 
+// ── Modal ─────────────────────────────────────────────────────────
 async function openModal(cardId){
   const card=S.cardCache[cardId]||S.cards.find(c=>c.id===cardId)||S.favorites[cardId];if(!card)return;
   S.modalCard=card;document.getElementById('modal').style.display='flex';
@@ -466,6 +547,7 @@ async function openModal(cardId){
 }
 function closeModal(){document.getElementById('modal').style.display='none';S.modalCard=null;}
 
+// ── Helpers ───────────────────────────────────────────────────────
 function getPriceInfo(card){
   const cm=card?.cardmarket?.prices;
   if(cm){const p=cm.trendPrice??cm.avg30??cm.averageSellPrice??null;if(p!=null)return{price:p,source:'cardmarket'};}

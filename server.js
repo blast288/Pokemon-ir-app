@@ -49,16 +49,20 @@ function getPriceInfo(card) {
 }
 
 function cacheCard(card) {
+  // Store full price data so Verzameld tab can show prices without re-fetching
   return {
     id: card.id, name: card.name, number: card.number,
     set: { id: card.set?.id, name: card.set?.name },
     images: card.images, artist: card.artist,
-    cardmarket: card.cardmarket, tcgplayer: card.tcgplayer,
-    rarity: card.rarity
+    cardmarket: card.cardmarket,
+    tcgplayer: card.tcgplayer,
+    rarity: card.rarity, subtypes: card.subtypes, types: card.types, hp: card.hp
   };
 }
 
-const H = { 'User-Agent': 'pokemon-ir-browser/9.0' };
+const H = { 'User-Agent': 'pokemon-ir-browser/10.0' };
+
+// Rarities that promo sets use for IR-style full art cards
 const PROMO_IR_RARITIES = ['Promo', 'Black Star Promo', 'Illustration Rare'];
 
 // ── Sets cache ────────────────────────────────────────────────────
@@ -85,6 +89,7 @@ async function fetchAllIRSets() {
     const allSets = setsData.data || [];
     const setsWithIR = [];
     const BATCH = 5;
+
     for (let i = 0; i < allSets.length; i += BATCH) {
       const batch = allSets.slice(i, i + BATCH);
       await Promise.all(batch.map(async set => {
@@ -110,11 +115,13 @@ async function fetchAllIRSets() {
       }));
       if (i + BATCH < allSets.length) await new Promise(r => setTimeout(r, 250));
     }
+
     setsWithIR.sort((a, b) => {
       if (a.isPromo && !b.isPromo) return 1;
       if (!a.isPromo && b.isPromo) return -1;
       return new Date(b.releaseDate) - new Date(a.releaseDate);
     });
+
     console.log(`[sets] Found ${setsWithIR.length} sets`);
     setsCache = setsWithIR;
     setsCacheTime = now;
@@ -123,6 +130,26 @@ async function fetchAllIRSets() {
     console.error('[sets]', e.message);
     return setsCache || [];
   }
+}
+
+// ── Fetch cards from API with dedup ──────────────────────────────
+async function fetchFromAPI(url) {
+  const r = await fetch(url, { headers: H });
+  return r.json();
+}
+
+function dedup(cards) {
+  const seen = new Set();
+  return cards.filter(c => { if (seen.has(c.id)) return false; seen.add(c.id); return true; });
+}
+
+function isPromoSetId(setId) {
+  if (!setId || setId === 'all') return false;
+  const sets = setsCache || [];
+  const info = sets.find(s => s.id === setId);
+  if (info) return info.isPromo;
+  // Fallback heuristic
+  return setId.endsWith('p') || ['mep', 'svp', 'swshp'].includes(setId);
 }
 
 // ── Routes ────────────────────────────────────────────────────────
@@ -136,40 +163,64 @@ app.get('/api/cards', async (req, res) => {
     const { set, page = 1, pageSize = 20, search = '' } = req.query;
     const setFilter = set && set !== 'all' ? ` set.id:${set}` : '';
     const searchFilter = search ? ` name:${search}*` : '';
-    const sets = setsCache || [];
-    const setInfo = sets.find(s => s.id === set);
-    const isPromoSet = setInfo?.isPromo || (set && set !== 'all' && (set.endsWith('p') || ['mep','svp','swshp'].includes(set)));
+    const pg = parseInt(page); const ps = parseInt(pageSize);
+
     let cards = [], totalCount = 0;
-    if (isPromoSet) {
+
+    if (set === 'all' && search) {
+      // SEARCH FIX: when searching across all sets, query BOTH IR and promo rarities
+      // so Charmander/Fennekin promos show up in search results
+      const [irRes, promoRes, bspRes] = await Promise.all([
+        fetchFromAPI(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`rarity:"Illustration Rare"${searchFilter}`)}&pageSize=250&orderBy=-set.releaseDate,number`),
+        fetchFromAPI(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`rarity:"Promo"${searchFilter}`)}&pageSize=100`),
+        fetchFromAPI(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`rarity:"Black Star Promo"${searchFilter}`)}&pageSize=100`),
+      ]);
+      const merged = dedup([...(irRes.data||[]), ...(promoRes.data||[]), ...(bspRes.data||[])]);
+      // Only keep promo cards that are actually IR-style (have illustration-style art)
+      // We identify these by checking if their set is a known promo set
+      const promoSetIds = new Set((setsCache||[]).filter(s=>s.isPromo).map(s=>s.id));
+      const filtered = merged.filter(c =>
+        c.rarity === 'Illustration Rare' ||
+        promoSetIds.has(c.set?.id)
+      );
+      filtered.sort((a, b) => new Date(b.set?.releaseDate||0) - new Date(a.set?.releaseDate||0));
+      totalCount = filtered.length;
+      cards = filtered.slice((pg - 1) * ps, pg * ps);
+
+    } else if (set === 'all') {
+      // Browse all sets: IR only (promos visible when their set is selected)
+      const q = encodeURIComponent(`rarity:"Illustration Rare"${searchFilter}`);
+      const d = await fetchFromAPI(`https://api.pokemontcg.io/v2/cards?q=${q}&page=${pg}&pageSize=${ps}&orderBy=-set.releaseDate,number`);
+      cards = d.data || []; totalCount = d.totalCount || 0;
+
+    } else if (isPromoSetId(set)) {
+      // Specific promo set: fetch all promo rarities
       const results = await Promise.all(
         PROMO_IR_RARITIES.map(rarity =>
-          fetch(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`rarity:"${rarity}"${setFilter}${searchFilter}`)}&pageSize=250`, { headers: H })
-            .then(r => r.json()).catch(() => ({ data: [] }))
+          fetchFromAPI(`https://api.pokemontcg.io/v2/cards?q=${encodeURIComponent(`rarity:"${rarity}"${setFilter}${searchFilter}`)}&pageSize=250`)
+            .catch(() => ({ data: [] }))
         )
       );
-      const seen = new Set();
-      const merged = results.flatMap(d => d.data || []).filter(c => {
-        if (seen.has(c.id)) return false;
-        seen.add(c.id); return true;
-      });
+      const merged = dedup(results.flatMap(d => d.data || []));
       merged.sort((a, b) => parseInt(a.number) - parseInt(b.number));
       totalCount = merged.length;
-      const start = (parseInt(page) - 1) * parseInt(pageSize);
-      cards = merged.slice(start, start + parseInt(pageSize));
+      cards = merged.slice((pg - 1) * ps, pg * ps);
+
     } else {
+      // Specific regular set
       const q = encodeURIComponent(`rarity:"Illustration Rare"${setFilter}${searchFilter}`);
-      const url = `https://api.pokemontcg.io/v2/cards?q=${q}&page=${page}&pageSize=${pageSize}&orderBy=-set.releaseDate,number`;
-      const d = await fetch(url, { headers: H }).then(r => r.json());
-      cards = d.data || [];
-      totalCount = d.totalCount || 0;
+      const d = await fetchFromAPI(`https://api.pokemontcg.io/v2/cards?q=${q}&page=${pg}&pageSize=${ps}&orderBy=number`);
+      cards = d.data || []; totalCount = d.totalCount || 0;
     }
+
+    // Update cardCache and priceHistory in DB
     const doc = await getData();
     const today = new Date().toISOString().split('T')[0];
     const ph = { ...(doc.priceHistory || {}) };
     const cc = { ...(doc.cardCache || {}) };
     let changed = false;
     cards.forEach(card => {
-      cc[card.id] = cacheCard(card);
+      cc[card.id] = cacheCard(card); // includes price data!
       const { price } = getPriceInfo(card);
       if (price && doc.favorites[card.id]) {
         if (!ph[card.id]) ph[card.id] = [];
@@ -182,13 +233,14 @@ app.get('/api/cards', async (req, res) => {
     });
     if (changed) await patchData({ priceHistory: ph, cardCache: cc });
     else await patchData({ cardCache: cc });
-    res.json({ data: cards, totalCount, page: parseInt(page), pageSize: parseInt(pageSize) });
+
+    res.json({ data: cards, totalCount, page: pg, pageSize: ps });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/cards/:id', async (req, res) => {
   try {
-    const d = await fetch(`https://api.pokemontcg.io/v2/cards/${req.params.id}`, { headers: H }).then(r => r.json());
+    const d = await fetchFromAPI(`https://api.pokemontcg.io/v2/cards/${req.params.id}`);
     const card = d.data;
     if (card) {
       const doc = await getData();
@@ -213,7 +265,7 @@ app.get('/api/cards/:id', async (req, res) => {
 app.get('/api/userdata', async (req, res) => {
   try {
     const doc = await getData();
-    res.json({ favorites: doc.favorites || {}, collected: doc.collected || {}, cardCache: doc.cardCache || {}, priceHistory: doc.priceHistory || {} });
+    res.json({ favorites: doc.favorites||{}, collected: doc.collected||{}, cardCache: doc.cardCache||{}, priceHistory: doc.priceHistory||{} });
   } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
@@ -225,6 +277,26 @@ app.post('/api/userdata/favorites', async (req, res) => {
 app.post('/api/userdata/collected', async (req, res) => {
   try { await patchData({ collected: req.body }); res.json({ ok: true }); }
   catch (e) { res.status(500).json({ error: e.message }); }
+});
+
+// New endpoint: enrich collected cards that are missing price data
+app.get('/api/enrich', async (req, res) => {
+  try {
+    const doc = await getData();
+    const cc = { ...(doc.cardCache || {}) };
+    const collectedIds = Object.keys(doc.collected || {});
+    const missing = collectedIds.filter(id => !cc[id] || !getPriceInfo(cc[id]).price);
+    let enriched = 0;
+    for (const id of missing.slice(0, 10)) { // max 10 at a time
+      try {
+        const d = await fetchFromAPI(`https://api.pokemontcg.io/v2/cards/${id}`);
+        if (d.data) { cc[id] = cacheCard(d.data); enriched++; }
+        await new Promise(r => setTimeout(r, 100));
+      } catch {}
+    }
+    if (enriched > 0) await patchData({ cardCache: cc });
+    res.json({ enriched, remaining: missing.length - enriched });
+  } catch (e) { res.status(500).json({ error: e.message }); }
 });
 
 app.get('/api/alerts', async (req, res) => {
