@@ -1,0 +1,1063 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<meta name="theme-color" content="#0f1a0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cheffify">
+<title>Cheffify</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,600;0,700;1,400&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f1a0f;--bg2:#162016;--surface:#1e2e1e;--surface2:#253025;--border:rgba(255,255,255,0.08);--accent:#a8e063;--accent2:#7bc842;--amber:#f5a623;--red:#e05252;--blue:#6ab0f5;--text:#f0f4ee;--text2:#8fa887;--text3:#5a705a;--r:18px;--rm:12px;}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;overflow:hidden;}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);display:flex;flex-direction:column;}
+#app{flex:1;overflow-y:auto;overflow-x:hidden;-webkit-overflow-scrolling:touch;padding-bottom:86px;}
+.screen{display:none;padding:16px;}
+.screen.active{display:block;}
+
+/* TOPBAR */
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:13px 16px 10px;background:var(--bg);position:sticky;top:0;z-index:50;border-bottom:1px solid var(--border);flex-shrink:0;}
+.brand{font-family:'Fraunces',serif;font-size:1.45rem;color:var(--accent);letter-spacing:-.5px;}
+.brand span{color:var(--text2);font-style:italic;font-weight:400;font-size:1rem;}
+.topbar-right{display:flex;gap:8px;align-items:center;}
+.lang-btn{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;color:var(--text2);font-size:.78rem;font-family:'Outfit',sans-serif;cursor:pointer;}
+
+/* BUTTONS */
+.btn{display:block;width:100%;border:none;border-radius:var(--r);padding:14px;font-family:'Outfit',sans-serif;font-size:.95rem;font-weight:600;cursor:pointer;text-align:center;transition:opacity .15s,transform .1s;}
+.btn:active{opacity:.82;transform:scale(.98);}
+.btn-green{background:var(--accent);color:var(--bg);}
+.btn-outline{background:transparent;color:var(--accent);border:1.5px solid var(--accent);margin-top:10px;}
+.btn-ghost{background:var(--surface);color:var(--text2);margin-top:10px;border:1px solid var(--border);}
+.btn-sm{padding:9px 14px;font-size:.82rem;border-radius:var(--rm);width:auto;display:inline-block;margin-top:0;}
+.btn-danger{background:rgba(224,82,82,.12);color:var(--red);border:1px solid rgba(224,82,82,.2);margin-top:8px;}
+
+/* HOME */
+.hero-band{background:linear-gradient(135deg,var(--surface2),var(--surface));border-radius:var(--r);padding:24px 20px;margin-bottom:18px;position:relative;overflow:hidden;border:1px solid var(--border);}
+.hero-band::before{content:'';position:absolute;right:-25px;top:-25px;width:120px;height:120px;border-radius:50%;background:radial-gradient(circle,rgba(168,224,99,.2),transparent 70%);}
+.hero-band h2{font-family:'Fraunces',serif;font-size:1.55rem;line-height:1.25;color:var(--text);margin-bottom:7px;}
+.hero-band h2 em{color:var(--accent);font-style:italic;}
+.hero-band p{color:var(--text2);font-size:.86rem;line-height:1.55;}
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:16px;}
+.mode-card{background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);padding:16px 12px;cursor:pointer;transition:border-color .2s,background .2s;text-align:center;}
+.mode-card:active,.mode-card.sel{border-color:var(--accent);background:rgba(168,224,99,.06);}
+.mode-card .mc-icon{font-size:1.8rem;margin-bottom:7px;}
+.mode-card strong{display:block;font-size:.84rem;color:var(--text);margin-bottom:2px;}
+.mode-card span{font-size:.72rem;color:var(--text3);line-height:1.4;display:block;}
+.badge{display:inline-block;background:var(--accent);color:var(--bg);font-size:.63rem;font-weight:600;border-radius:99px;padding:2px 7px;margin-top:5px;}
+.section-lbl{font-size:.68rem;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;margin-bottom:9px;}
+
+/* UPLOAD */
+.progress-strip{display:flex;gap:5px;margin-bottom:18px;}
+.prog-step{flex:1;height:3px;border-radius:99px;background:var(--surface2);transition:background .3s;}
+.prog-step.done{background:var(--accent);}
+.mode-notice{background:rgba(168,224,99,.06);border:1px solid rgba(168,224,99,.15);border-radius:var(--rm);padding:11px 13px;font-size:.81rem;color:var(--text2);margin-bottom:16px;line-height:1.5;}
+.upload-zone{border:2px dashed rgba(168,224,99,.22);border-radius:var(--r);padding:24px 14px;text-align:center;cursor:pointer;margin-bottom:10px;transition:border-color .2s,background .2s;background:rgba(168,224,99,.02);position:relative;}
+.upload-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.upload-zone:active{border-color:var(--accent);}
+.uz-icon{font-size:2.2rem;margin-bottom:7px;}
+.uz-title{font-size:.9rem;font-weight:600;color:var(--text);margin-bottom:2px;}
+.uz-sub{font-size:.76rem;color:var(--text3);}
+.preview-img{width:100%;border-radius:var(--rm);margin-bottom:10px;object-fit:cover;max-height:190px;display:none;border:1px solid var(--border);}
+textarea{width:100%;border:1.5px solid var(--border);border-radius:var(--rm);padding:13px 14px;font-family:'Outfit',sans-serif;font-size:.86rem;color:var(--text);background:var(--surface);resize:none;height:110px;line-height:1.55;outline:none;transition:border-color .2s;}
+textarea:focus{border-color:var(--accent);}
+textarea::placeholder{color:var(--text3);}
+.tag-area{min-height:80px;border:1.5px solid var(--border);border-radius:var(--rm);padding:9px 11px;background:var(--surface);display:flex;flex-wrap:wrap;gap:5px;align-items:flex-start;cursor:text;transition:border-color .2s;margin-bottom:7px;}
+.tag-area:focus-within{border-color:var(--accent);}
+.ing-tag{background:rgba(168,224,99,.12);border:1px solid rgba(168,224,99,.22);border-radius:99px;padding:4px 9px 4px 11px;font-size:.78rem;color:var(--accent);display:flex;align-items:center;gap:4px;white-space:nowrap;}
+.ing-tag button{background:none;border:none;color:var(--text3);cursor:pointer;font-size:.95rem;line-height:1;padding:0;display:flex;}
+.tag-input{border:none;background:transparent;outline:none;font-family:'Outfit',sans-serif;font-size:.86rem;color:var(--text);flex:1;min-width:100px;padding:3px;}
+.tag-input::placeholder{color:var(--text3);}
+.tag-hint{font-size:.72rem;color:var(--text3);margin-bottom:10px;}
+.tab-row{display:flex;gap:7px;margin-bottom:11px;}
+
+/* LOADING */
+#screen-loading{display:none;text-align:center;padding:65px 20px 40px;}
+#screen-loading.active{display:block;}
+.chef-spinner{width:68px;height:68px;border-radius:50%;background:var(--surface);display:flex;align-items:center;justify-content:center;font-size:1.9rem;margin:0 auto 18px;animation:pulse 1.4s ease-in-out infinite;border:2px solid rgba(168,224,99,.2);}
+@keyframes pulse{0%,100%{transform:scale(1);box-shadow:0 0 0 0 rgba(168,224,99,.25);}50%{transform:scale(1.05);box-shadow:0 0 0 12px rgba(168,224,99,0);}}
+.loading-title{font-family:'Fraunces',serif;font-size:1.35rem;color:var(--text);margin-bottom:7px;}
+.loading-sub{font-size:.86rem;color:var(--text2);}
+.loading-dots{display:inline-flex;gap:5px;margin-top:9px;}
+.loading-dots span{width:6px;height:6px;border-radius:50%;background:var(--accent);animation:dot .9s ease-in-out infinite;}
+.loading-dots span:nth-child(2){animation-delay:.2s;}
+.loading-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes dot{0%,80%,100%{opacity:.2;transform:scale(.8);}40%{opacity:1;transform:scale(1);}}
+
+/* RECIPE VIEW */
+.recipe-hero{background:linear-gradient(150deg,var(--surface2),var(--surface));border-radius:var(--r);padding:20px 18px;margin-bottom:12px;border:1px solid var(--border);position:relative;overflow:hidden;}
+.recipe-hero::after{content:'';position:absolute;right:-20px;bottom:-20px;width:100px;height:100px;border-radius:50%;background:radial-gradient(circle,rgba(168,224,99,.15),transparent 70%);}
+.recipe-hero h2{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--text);margin-bottom:7px;line-height:1.25;}
+.recipe-hero p{font-size:.83rem;color:var(--text2);line-height:1.55;margin-bottom:12px;}
+.chips{display:flex;flex-wrap:wrap;gap:6px;}
+.chip{background:rgba(255,255,255,.07);border-radius:7px;padding:4px 10px;font-size:.76rem;color:var(--text2);display:flex;align-items:center;gap:3px;}
+.chip.green{background:rgba(168,224,99,.12);color:var(--accent);}
+.chip.amber{background:rgba(245,166,35,.12);color:var(--amber);}
+
+.share-row{display:flex;gap:7px;margin-bottom:12px;}
+.share-btn{flex:1;display:flex;align-items:center;justify-content:center;gap:6px;border:none;border-radius:var(--rm);padding:10px;font-family:'Outfit',sans-serif;font-size:.83rem;font-weight:500;cursor:pointer;transition:opacity .15s;}
+.share-btn:active{opacity:.75;}
+.btn-wa{background:#25d366;color:#fff;}
+.btn-copy{background:var(--surface);color:var(--text2);border:1px solid var(--border);}
+
+/* SCORE WIDGET */
+.score-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rm);padding:14px 16px;margin-bottom:12px;}
+.score-card label{font-size:.84rem;color:var(--text2);display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.score-val{font-family:'Fraunces',serif;font-size:1.3rem;color:var(--accent);}
+.score-slider{width:100%;-webkit-appearance:none;appearance:none;height:5px;border-radius:99px;background:var(--surface2);outline:none;margin-bottom:8px;}
+.score-slider::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg);}
+.stars-row{display:flex;justify-content:center;gap:3px;font-size:1.3rem;}
+
+/* PORTION */
+.portion-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rm);padding:13px 15px;display:flex;align-items:center;gap:9px;margin-bottom:12px;flex-wrap:wrap;}
+.portion-card label{font-size:.85rem;color:var(--text2);}
+.port-btn{width:32px;height:32px;border-radius:50%;border:1.5px solid var(--accent);background:transparent;color:var(--accent);font-size:1rem;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;}
+.port-num{font-size:1rem;font-weight:600;color:var(--text);min-width:24px;text-align:center;}
+.port-slider{flex:1;min-width:70px;-webkit-appearance:none;appearance:none;height:4px;border-radius:99px;background:var(--surface2);outline:none;}
+.port-slider::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg);}
+
+/* NUTRITION */
+.nutr-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;}
+.nutr-card h3,.sec-card h3{font-family:'Fraunces',serif;font-size:1rem;color:var(--text);margin-bottom:13px;display:flex;align-items:center;gap:6px;}
+.kcal-big{background:linear-gradient(135deg,rgba(168,224,99,.12),rgba(168,224,99,.04));border:1px solid rgba(168,224,99,.2);border-radius:var(--rm);text-align:center;padding:14px;margin-bottom:11px;}
+.kcal-num{font-family:'Fraunces',serif;font-size:2.2rem;color:var(--accent);line-height:1;}
+.kcal-lbl{font-size:.73rem;color:var(--text3);margin-top:2px;text-transform:uppercase;letter-spacing:.6px;}
+.nutr-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:13px;}
+.ng-box{background:var(--surface2);border-radius:var(--rm);padding:10px 7px;text-align:center;}
+.ng-val{font-size:1.1rem;font-weight:600;color:var(--text);display:block;}
+.ng-lbl{font-size:.66rem;color:var(--text3);text-transform:uppercase;letter-spacing:.4px;}
+.macro-bars{display:flex;flex-direction:column;gap:8px;}
+.mb-row{display:flex;align-items:center;gap:8px;}
+.mb-lbl{font-size:.74rem;color:var(--text2);width:68px;flex-shrink:0;}
+.mb-track{flex:1;height:4px;background:var(--surface2);border-radius:99px;overflow:hidden;}
+.mb-fill{height:100%;border-radius:99px;transition:width .5s ease;}
+.mb-pct{font-size:.7rem;color:var(--text3);width:30px;text-align:right;flex-shrink:0;}
+
+/* SEC CARD */
+.sec-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px;}
+.ing-row{display:flex;justify-content:space-between;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border);gap:9px;}
+.ing-row:last-child{border-bottom:none;}
+.ing-name{font-size:.85rem;color:var(--text);flex:1;}
+.ing-alt{font-size:.72rem;color:var(--accent2);margin-top:2px;font-style:italic;}
+.ing-qty{font-size:.85rem;color:var(--accent);font-weight:500;white-space:nowrap;}
+.step-row{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.step-row:last-child{border-bottom:none;}
+.step-num{width:24px;height:24px;flex-shrink:0;border-radius:50%;background:rgba(168,224,99,.1);border:1px solid rgba(168,224,99,.22);color:var(--accent);font-size:.75rem;font-weight:600;display:flex;align-items:center;justify-content:center;margin-top:1px;}
+.step-desc{font-size:.85rem;color:var(--text2);line-height:1.56;}
+.tip-box{background:rgba(245,166,35,.07);border:1px solid rgba(245,166,35,.18);border-radius:var(--rm);padding:13px 15px;font-size:.83rem;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.tip-box strong{color:var(--amber);display:block;margin-bottom:3px;}
+
+/* ══ RECEPTENBOEK ══ */
+.book-topbar{margin-bottom:14px;}
+.search-wrap{position:relative;margin-bottom:10px;}
+.search-inp{width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rm);padding:11px 14px 11px 40px;font-family:'Outfit',sans-serif;font-size:.88rem;color:var(--text);outline:none;transition:border-color .2s;}
+.search-inp:focus{border-color:var(--accent);}
+.search-inp::placeholder{color:var(--text3);}
+.search-icon{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:1.1rem;pointer-events:none;}
+.search-clear{position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--text3);cursor:pointer;font-size:1.1rem;display:none;}
+
+/* ingredient filter cloud */
+.filter-cloud{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;max-height:92px;overflow:hidden;transition:max-height .3s;}
+.filter-cloud.expanded{max-height:400px;}
+.filter-chip{background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:5px 12px;font-size:.76rem;color:var(--text2);cursor:pointer;transition:background .15s,border-color .15s,color .15s;white-space:nowrap;}
+.filter-chip.active{background:rgba(168,224,99,.12);border-color:rgba(168,224,99,.3);color:var(--accent);}
+.filter-chip.show-more{color:var(--text3);border-style:dashed;}
+
+.book-stats{display:flex;gap:10px;margin-bottom:14px;}
+.stat-pill{background:var(--surface);border:1px solid var(--border);border-radius:var(--rm);padding:9px 14px;flex:1;text-align:center;}
+.stat-num{font-family:'Fraunces',serif;font-size:1.4rem;color:var(--accent);display:block;}
+.stat-lbl{font-size:.68rem;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;}
+
+.sort-row{display:flex;gap:7px;margin-bottom:12px;overflow-x:auto;padding-bottom:2px;}
+.sort-btn{background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:6px 13px;font-size:.76rem;color:var(--text2);cursor:pointer;white-space:nowrap;transition:background .15s,color .15s;}
+.sort-btn.active{background:rgba(168,224,99,.1);color:var(--accent);border-color:rgba(168,224,99,.25);}
+
+/* recipe card in book */
+.book-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;}
+.book-card:active{border-color:var(--accent);}
+.book-card-top{display:flex;gap:12px;align-items:flex-start;}
+.book-thumb{width:54px;height:54px;border-radius:var(--rm);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+.book-info{flex:1;min-width:0;}
+.book-name{font-size:.92rem;font-weight:600;color:var(--text);margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.book-meta{font-size:.74rem;color:var(--text3);display:flex;gap:10px;flex-wrap:wrap;}
+.book-score{display:flex;align-items:center;gap:4px;margin-top:6px;}
+.mini-stars{font-size:.85rem;letter-spacing:1px;}
+.score-badge{font-size:.72rem;font-weight:600;color:var(--text2);}
+.book-ing-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;}
+.book-ing-tag{background:var(--surface2);border-radius:99px;padding:2px 9px;font-size:.7rem;color:var(--text3);}
+.book-ing-tag.match{background:rgba(168,224,99,.1);color:var(--accent);}
+
+.no-results{text-align:center;padding:48px 20px;color:var(--text3);}
+.no-results .nr-icon{font-size:2.8rem;margin-bottom:10px;}
+
+/* HISTORY (simple) */
+.hist-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:14px;margin-bottom:9px;display:flex;gap:12px;align-items:center;cursor:pointer;transition:border-color .2s;}
+.hist-card:active{border-color:var(--accent);}
+.hist-icon{width:48px;height:48px;border-radius:var(--rm);background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0;}
+.hist-info strong{display:block;font-size:.88rem;color:var(--text);margin-bottom:2px;}
+.hist-info span{font-size:.74rem;color:var(--text3);}
+
+/* BOTTOM NAV */
+.bottom-nav{display:flex;background:var(--bg2);border-top:1px solid var(--border);padding:8px 0 max(8px,env(safe-area-inset-bottom));flex-shrink:0;z-index:50;}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;background:none;border:none;cursor:pointer;padding:5px 2px;}
+.nav-btn .ni{font-size:1.2rem;transition:transform .15s;}
+.nav-btn .nl{font-size:.6rem;color:var(--text3);font-family:'Outfit',sans-serif;transition:color .15s;}
+.nav-btn.active .nl{color:var(--accent);}
+.nav-btn.active .ni{transform:scale(1.1);}
+
+/* modal overlay */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:200;display:flex;align-items:flex-end;justify-content:center;}
+.modal-overlay.hidden{display:none;}
+.modal-sheet{background:var(--bg2);border-radius:22px 22px 0 0;padding:20px 18px 32px;width:100%;max-width:460px;max-height:92vh;overflow-y:auto;}
+.modal-handle{width:40px;height:4px;background:var(--border);border-radius:99px;margin:0 auto 18px;}
+.modal-title{font-family:'Fraunces',serif;font-size:1.15rem;color:var(--text);margin-bottom:16px;}
+
+@media(min-width:480px){
+  #app{max-width:460px;margin:0 auto;}
+  .bottom-nav{max-width:460px;margin:0 auto;}
+  body{align-items:center;}
+  #app,body{width:100%;}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">Cheffify <span>by AI</span></div>
+  <div class="topbar-right">
+    <button class="lang-btn" onclick="cycleLang()">🌐 <span id="lang-display">NL</span></button>
+  </div>
+</div>
+
+<div id="app">
+
+<!-- ══ HOME ══ -->
+<div id="screen-home" class="screen active">
+  <div class="hero-band">
+    <h2>Scan. Kook.<br><em>Geniet.</em></h2>
+    <p id="hero-sub">Van verpakking of gerecht naar een zelfgemaakt thuisrecept met voedingswaarden en gezondere tips.</p>
+  </div>
+  <div class="section-lbl" id="lbl-kies">Kies je invoermethode</div>
+  <div class="mode-grid">
+    <div class="mode-card sel" id="mc-both" onclick="setMode('both')">
+      <div class="mc-icon">📸🏷️</div>
+      <strong id="mc-both-t">Foto + Ingrediënten</strong>
+      <span id="mc-both-s">Meest nauwkeurig</span>
+      <span class="badge" id="mc-both-b">Aanbevolen</span>
+    </div>
+    <div class="mode-card" id="mc-photo" onclick="setMode('photo')">
+      <div class="mc-icon">📸</div>
+      <strong id="mc-photo-t">Alleen foto</strong>
+      <span id="mc-photo-s">Gerecht of menu</span>
+    </div>
+    <div class="mode-card" id="mc-ing" onclick="setMode('ingredients')">
+      <div class="mc-icon">🏷️</div>
+      <strong id="mc-ing-t">Ingrediënten</strong>
+      <span id="mc-ing-s">Verpakking of handmatig</span>
+    </div>
+    <div class="mode-card" id="mc-rest" onclick="setMode('restaurant')">
+      <div class="mc-icon">🍽️</div>
+      <strong id="mc-rest-t">Restaurant</strong>
+      <span id="mc-rest-s">Typ wat je at</span>
+    </div>
+  </div>
+  <button class="btn btn-green" onclick="startScan()" id="btn-start">🚀 Begin met scannen</button>
+  <button class="btn btn-ghost" onclick="showScreen('book')" id="btn-book" style="margin-top:10px;">📖 Receptenboek</button>
+</div>
+
+<!-- ══ UPLOAD ══ -->
+<div id="screen-upload" class="screen">
+  <div class="progress-strip"><div class="prog-step" id="ps1"></div><div class="prog-step" id="ps2"></div><div class="prog-step" id="ps3"></div></div>
+  <div class="mode-notice" id="mode-notice">ℹ️ …</div>
+  <div id="photo-block">
+    <div class="section-lbl" id="lbl-step1">Stap 1 — Foto van het gerecht</div>
+    <div class="upload-zone" onclick="document.getElementById('inp-dish').click()">
+      <input type="file" id="inp-dish" accept="image/*" capture="environment" onchange="handleImg(this,'prev-dish','dish')">
+      <div class="uz-icon">📸</div>
+      <div class="uz-title" id="uz-dish-t">Tik om foto te maken</div>
+      <div class="uz-sub" id="uz-dish-s">of kies uit galerij</div>
+    </div>
+    <img id="prev-dish" class="preview-img" alt="">
+  </div>
+  <div id="ing-block">
+    <div class="section-lbl" id="lbl-step2">Stap 2 — Ingrediëntenlijst</div>
+    <div class="tab-row">
+      <button class="btn btn-sm btn-green" id="tab-photo-btn" onclick="switchIngTab('photo')">📷 Foto</button>
+      <button class="btn btn-sm btn-ghost" id="tab-manual-btn" onclick="switchIngTab('manual')">✍️ Handmatig</button>
+      <button class="btn btn-sm btn-ghost" id="tab-text-btn" onclick="switchIngTab('text')">📋 Plakken</button>
+    </div>
+    <div id="ing-tab-photo">
+      <div class="upload-zone" onclick="document.getElementById('inp-ing').click()">
+        <input type="file" id="inp-ing" accept="image/*" capture="environment" onchange="handleImg(this,'prev-ing','ing')">
+        <div class="uz-icon">🏷️</div>
+        <div class="uz-title" id="uz-ing-t">Foto van verpakking</div>
+        <div class="uz-sub" id="uz-ing-s">Achterkant met ingrediënten</div>
+      </div>
+      <img id="prev-ing" class="preview-img" alt="">
+    </div>
+    <div id="ing-tab-manual" style="display:none;">
+      <div class="tag-area" onclick="document.getElementById('tag-input').focus()">
+        <input class="tag-input" id="tag-input" placeholder="Typ ingredient + Enter..." onkeydown="handleTagKey(event)">
+      </div>
+      <div class="tag-hint" id="tag-hint-txt">Druk Enter of komma na elk ingredient</div>
+    </div>
+    <div id="ing-tab-text" style="display:none;">
+      <textarea id="ing-textarea" placeholder="Plak hier de ingrediëntenlijst..." style="margin-bottom:10px;"></textarea>
+    </div>
+  </div>
+  <div style="margin-top:4px;">
+    <div class="section-lbl" id="lbl-extra">Extra info (optioneel)</div>
+    <textarea id="extra-text" style="height:65px;" placeholder="bv. naam gerecht, dieetwensen, restaurant naam..."></textarea>
+  </div>
+  <button class="btn btn-green" onclick="generateRecipe()" style="margin-top:14px;" id="btn-gen">✨ Genereer recept</button>
+  <button class="btn btn-ghost" onclick="showScreen('home')" id="btn-back">← Terug</button>
+</div>
+
+<!-- ══ LOADING ══ -->
+<div id="screen-loading">
+  <div class="chef-spinner">👨‍🍳</div>
+  <div class="loading-title" id="load-title">Cheffify kookt…</div>
+  <div class="loading-sub" id="load-sub">AI analyseert je gerecht</div>
+  <div class="loading-dots"><span></span><span></span><span></span></div>
+</div>
+
+<!-- ══ RECIPE ══ -->
+<div id="screen-recipe" class="screen">
+  <div id="recipe-content"></div>
+  <div style="display:flex;gap:8px;margin-bottom:8px;">
+    <button class="btn btn-green" style="flex:1;" onclick="saveToBook()" id="btn-save">📖 Voeg toe aan receptenboek</button>
+  </div>
+  <button class="btn btn-outline" onclick="showScreen('home')" id="btn-new">+ Nieuw recept</button>
+</div>
+
+<!-- ══ RECEPTENBOEK ══ -->
+<div id="screen-book" class="screen">
+  <div class="book-topbar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="search-inp" id="book-search" placeholder="Zoek op naam, gerecht, cuisine..." oninput="filterBook()">
+      <button class="search-clear" id="search-clear" onclick="clearSearch()">✕</button>
+    </div>
+    <div id="filter-cloud" class="filter-cloud"></div>
+  </div>
+  <div class="book-stats" id="book-stats"></div>
+  <div class="sort-row" id="sort-row">
+    <button class="sort-btn active" onclick="setSort('datum')" id="sort-datum">📅 Nieuwste</button>
+    <button class="sort-btn" onclick="setSort('score')" id="sort-score">⭐ Beoordeling</button>
+    <button class="sort-btn" onclick="setSort('kcal')" id="sort-kcal">🔥 Kcal</button>
+    <button class="sort-btn" onclick="setSort('naam')" id="sort-naam">🔤 Naam</button>
+  </div>
+  <div id="book-list"></div>
+</div>
+
+
+<!-- ══ SETTINGS ══ -->
+<div id="screen-settings" class="screen">
+  <div style="background:linear-gradient(135deg,var(--surface2),var(--surface));border-radius:var(--r);padding:22px 18px;margin-bottom:18px;border:1px solid var(--border);">
+    <div style="font-size:2rem;margin-bottom:8px;">🔑</div>
+    <h2 style="font-family:'Fraunces',serif;font-size:1.3rem;color:var(--text);margin-bottom:8px;">API-sleutel instellen</h2>
+    <p style="font-size:.84rem;color:var(--text2);line-height:1.55;">Cheffify heeft een Anthropic API-sleutel nodig om recepten te genereren. De sleutel wordt veilig lokaal opgeslagen op jouw toestel.</p>
+  </div>
+  <div style="background:rgba(168,224,99,.06);border:1px solid rgba(168,224,99,.18);border-radius:var(--rm);padding:14px;margin-bottom:18px;font-size:.82rem;color:var(--text2);line-height:1.6;">
+    <strong style="color:var(--accent);display:block;margin-bottom:4px;">📋 Hoe krijg ik een sleutel?</strong>
+    1. Ga naar <strong>console.anthropic.com</strong><br>
+    2. Maak een gratis account aan<br>
+    3. Klik op <strong>API Keys → Create Key</strong><br>
+    4. Kopieer de sleutel en plak hem hieronder<br>
+    <span style="color:var(--text3);font-size:.78rem;">Nieuwe accounts krijgen gratis tegoed om te starten.</span>
+  </div>
+  <div class="section-lbl">Jouw API-sleutel</div>
+  <div style="position:relative;margin-bottom:12px;">
+    <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rm);padding:13px 44px 13px 14px;font-family:'Outfit',sans-serif;font-size:.86rem;color:var(--text);outline:none;transition:border-color .2s;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+    <button onclick="toggleKeyVisibility()" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);background:none;border:none;cursor:pointer;font-size:1.1rem;color:var(--text3);" id="eye-btn">👁️</button>
+  </div>
+  <div id="key-status" style="font-size:.78rem;margin-bottom:14px;min-height:18px;color:var(--accent);"></div>
+
+  <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">
+    <div class="section-lbl">Vercel Proxy URL</div>
+    <p style="font-size:.78rem;color:var(--text3);margin-bottom:10px;line-height:1.5;">Vul hier je eigen Vercel proxy-URL in (zie instructies). Zonder dit werkt de app niet.</p>
+    <input type="text" id="proxy-url-input" placeholder="https://jouw-naam.vercel.app/api/recipe" style="width:100%;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--rm);padding:13px 14px;font-family:'Outfit',sans-serif;font-size:.82rem;color:var(--text);outline:none;margin-bottom:8px;" onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border)'">
+    <div id="proxy-status" style="font-size:.78rem;margin-bottom:12px;min-height:16px;color:var(--accent);"></div>
+  </div>
+
+  <button class="btn btn-green" onclick="saveApiKey()">✓ Opslaan</button>
+  <button class="btn btn-ghost" onclick="showScreen('home')">← Terug</button>
+  <div style="margin-top:24px;padding-top:18px;border-top:1px solid var(--border);">
+    <div class="section-lbl">Over Cheffify</div>
+    <p style="font-size:.8rem;color:var(--text3);line-height:1.6;">Versie 3.0 · Jouw recepten en sleutel worden alleen lokaal opgeslagen op dit apparaat.</p>
+  </div>
+</div>
+
+</div><!-- #app -->
+
+<!-- SCORE MODAL -->
+<div class="modal-overlay hidden" id="score-modal">
+  <div class="modal-sheet">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="score-modal-title">Beoordeel dit recept</div>
+    <div class="score-card" style="margin-bottom:16px;">
+      <label>Jouw score <span class="score-val" id="modal-score-val">7.0</span> / 10</label>
+      <input type="range" class="score-slider" id="modal-score-slider" min="1" max="10" step="0.5" value="7" oninput="updateScorePreview(this.value)">
+      <div class="stars-row" id="modal-stars">⭐⭐⭐⭐⭐⭐⭐☆☆☆</div>
+    </div>
+    <button class="btn btn-green" onclick="confirmScore()">✓ Sla beoordeling op</button>
+    <button class="btn btn-ghost" onclick="closeScoreModal()">Annuleer</button>
+  </div>
+</div>
+
+<!-- BOTTOM NAV (4 tabs) -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" id="nav-home" onclick="showScreen('home')">
+    <span class="ni">🏠</span><span class="nl" id="nl-home">Home</span>
+  </button>
+  <button class="nav-btn" id="nav-upload" onclick="startScan()">
+    <span class="ni">📷</span><span class="nl" id="nl-scan">Scan</span>
+  </button>
+  <button class="nav-btn" id="nav-book" onclick="showScreen('book')">
+    <span class="ni">📖</span><span class="nl" id="nl-book">Receptenboek</span>
+  </button>
+  <button class="nav-btn" id="nav-recipe" onclick="showScreen('recipe')" style="display:none;">
+    <span class="ni">🍽️</span><span class="nl">Recept</span>
+  </button>
+  <button class="nav-btn" id="nav-settings" onclick="showScreen('settings')">
+    <span class="ni">⚙️</span><span class="nl">Instellingen</span>
+  </button>
+</nav>
+
+<script>
+// ════════════════════════════
+//  STATE
+// ════════════════════════════
+let currentMode='both';
+let dishB64=null,ingB64=null;
+let currentRecipe=null;
+let basePortions=2,currentPortions=2;
+let currentIngTab='photo';
+let tags=[];
+let lang='nl';
+let currentSort='datum';
+let activeFilters=new Set();
+let scoreModalIdx=-1;
+let filterCloudExpanded=false;
+
+const STORE='cheffify_v3';
+
+// ════════════════════════════
+//  TRANSLATIONS
+// ════════════════════════════
+const T={
+  nl:{
+    heroSub:'Van verpakking of gerecht naar een zelfgemaakt thuisrecept met voedingswaarden en gezondere tips.',
+    kiesModus:'Kies je invoermethode',mcBothT:'Foto + Ingrediënten',mcBothS:'Meest nauwkeurig',mcBothB:'Aanbevolen',
+    mcPhotoT:'Alleen foto',mcPhotoS:'Gerecht of menu',mcIngT:'Ingrediënten',mcIngS:'Verpakking of handmatig',
+    mcRestT:'Restaurant',mcRestS:'Typ wat je at',
+    btnStart:'🚀 Begin met scannen',btnBook:'📖 Receptenboek',
+    lbl1:'Stap 1 — Foto van het gerecht',lbl2:'Stap 2 — Ingrediëntenlijst',lblExtra:'Extra info (optioneel)',
+    uzDishT:'Tik om foto te maken',uzDishS:'of kies uit galerij',uzIngT:'Foto van verpakking',uzIngS:'Achterkant met ingrediënten',
+    tagHint:'Druk Enter of komma na elk ingredient',
+    btnGen:'✨ Genereer recept',btnBack:'← Terug',btnSave:'📖 Voeg toe aan receptenboek',btnNew:'+ Nieuw recept',
+    lbl3:'Ingrediënten',lbl4:'Bereiding',lblNutr:'Voedingswaarden per portie',lblTip:"Chef's Tip",lblAlts:'Gezondere tips',lblPortion:'Porties',
+    nlHome:'Home',nlScan:'Scan',nlBook:'Receptenboek',lblHist:'Opgeslagen recepten',
+    loadTitle:'Cheffify kookt…',loadSub:'AI analyseert je gerecht',
+    noteBoth:'📸 + 🏷️ Combinatie geeft het meest accurate recept.',notePhoto:'📸 Alleen foto: AI schat het recept. Voeg extra info toe voor meer precisie.',
+    noteIng:'🏷️ Alleen ingrediënten: hoe meer details, hoe beter het recept.',noteRest:'🍽️ Restaurant modus: typ de gerechtnaam of beschrijf wat je at.',
+    waText:(r)=>`🍽️ *${r.naam}* via Cheffify\n\n⏱️ ${r.bereidingstijd} | 👥 ${r.porties} pers. | 🔥 ${r.voedingswaarden_per_portie?.kcal||'?'} kcal\n\n🛒 *Ingrediënten:*\n${r.ingredienten.map(i=>`• ${i.naam}: ${i.hoeveelheid}`).join('\n')}\n\n👨‍🍳 *Bereiding:*\n${r.stappen.map((s,i)=>`${i+1}. ${s}`).join('\n')}\n\n💡 ${r.tip||''}\n\n_Gemaakt met Cheffify_`,
+    copied:'✓ Gekopieerd!',saved:'✅ Toegevoegd aan receptenboek!',saveDone:'✅ Opgeslagen!',
+    errMsg:'Er ging iets mis. Controleer je verbinding.',errInput:'Voeg minstens een foto of ingrediënten toe!',
+    emptyBook:'Nog geen recepten. Scan je eerste gerecht!',
+    scoreTitle:'Beoordeel dit recept',noResultsTitle:'Geen recepten gevonden',noResultsSub:'Probeer een andere zoekterm of filter',
+    rateBtn:'⭐ Beoordeel',deleteBtn:'🗑️ Verwijder',openBtn:'📖 Open',
+    statsRecipes:'Recepten',statsAvgScore:'Gem. score',statsAvgKcal:'Gem. kcal',
+    allIngrLabel:'Alle ingrediënten',showMore:'+ meer',showLess:'Minder',
+  },
+  fr:{
+    heroSub:"De l'emballage ou du plat à une recette maison avec valeurs nutritives et conseils santé.",
+    kiesModus:'Choisissez votre méthode',mcBothT:'Photo + Ingrédients',mcBothS:'Résultat le plus précis',mcBothB:'Recommandé',
+    mcPhotoT:'Photo seulement',mcPhotoS:'Photographier le plat',mcIngT:'Ingrédients',mcIngS:'Emballage ou manuel',
+    mcRestT:'Restaurant',mcRestS:'Tapez ce que vous avez mangé',
+    btnStart:'🚀 Commencer',btnBook:'📖 Livre de recettes',
+    lbl1:"Étape 1 — Photo du plat",lbl2:"Étape 2 — Ingrédients",lblExtra:'Info supplémentaire (optionnel)',
+    uzDishT:'Appuyer pour prendre une photo',uzDishS:'ou choisir dans la galerie',uzIngT:"Photo de l'emballage",uzIngS:'Dos avec les ingrédients',
+    tagHint:'Appuyez sur Entrée ou virgule après chaque ingrédient',
+    btnGen:'✨ Générer la recette',btnBack:'← Retour',btnSave:'📖 Ajouter au livre',btnNew:'+ Nouvelle recette',
+    lbl3:'Ingrédients',lbl4:'Préparation',lblNutr:'Valeurs nutritionnelles par portion',lblTip:'Conseil du chef',lblAlts:'Conseils santé',lblPortion:'Portions',
+    nlHome:'Accueil',nlScan:'Scanner',nlBook:'Livre de recettes',
+    loadTitle:'Cheffify cuisine…',loadSub:"L'IA analyse votre plat",
+    noteBoth:'📸 + 🏷️ La combinaison donne le résultat le plus précis.',notePhoto:"📸 Photo seulement: l'IA estime la recette.",
+    noteIng:"🏷️ Ingrédients seulement: plus il y a de détails, mieux c'est.",noteRest:'🍽️ Mode restaurant: tapez le nom du plat.',
+    waText:(r)=>`🍽️ *${r.naam}* via Cheffify\n\n⏱️ ${r.bereidingstijd} | 👥 ${r.porties} pers. | 🔥 ${r.voedingswaarden_per_portie?.kcal||'?'} kcal\n\n🛒 *Ingrédients:*\n${r.ingredienten.map(i=>`• ${i.naam}: ${i.hoeveelheid}`).join('\n')}\n\n👨‍🍳 *Préparation:*\n${r.stappen.map((s,i)=>`${i+1}. ${s}`).join('\n')}\n\n💡 ${r.tip||''}\n\n_Fait avec Cheffify_`,
+    copied:'✓ Copié!',saved:'✅ Ajouté au livre!',saveDone:'✅ Sauvegardé!',
+    errMsg:"Une erreur s'est produite.",errInput:"Ajoutez au moins une photo ou des ingrédients!",
+    emptyBook:'Aucune recette. Scannez votre premier plat!',
+    scoreTitle:'Évaluez cette recette',noResultsTitle:'Aucune recette trouvée',noResultsSub:'Essayez un autre terme ou filtre',
+    rateBtn:'⭐ Évaluer',deleteBtn:'🗑️ Supprimer',openBtn:'📖 Ouvrir',
+    statsRecipes:'Recettes',statsAvgScore:'Score moy.',statsAvgKcal:'Kcal moy.',
+    allIngrLabel:'Tous les ingrédients',showMore:'+ plus',showLess:'Moins',
+  },
+  en:{
+    heroSub:'From packaging or dish to a homemade recipe with nutritional values and healthier tips.',
+    kiesModus:'Choose your input method',mcBothT:'Photo + Ingredients',mcBothS:'Most accurate',mcBothB:'Recommended',
+    mcPhotoT:'Photo only',mcPhotoS:'Dish or menu',mcIngT:'Ingredients',mcIngS:'Packaging or manual',
+    mcRestT:'Restaurant',mcRestS:'Type what you ate',
+    btnStart:'🚀 Start scanning',btnBook:'📖 Recipe book',
+    lbl1:'Step 1 — Photo of the dish',lbl2:'Step 2 — Ingredient list',lblExtra:'Extra info (optional)',
+    uzDishT:'Tap to take a photo',uzDishS:'or choose from gallery',uzIngT:'Photo of packaging',uzIngS:'Back of pack',
+    tagHint:'Press Enter or comma after each ingredient',
+    btnGen:'✨ Generate recipe',btnBack:'← Back',btnSave:'📖 Add to recipe book',btnNew:'+ New recipe',
+    lbl3:'Ingredients',lbl4:'Preparation',lblNutr:'Nutritional values per serving',lblTip:"Chef's Tip",lblAlts:'Healthier tips',lblPortion:'Servings',
+    nlHome:'Home',nlScan:'Scan',nlBook:'Recipe book',
+    loadTitle:'Cheffify is cooking…',loadSub:'AI is analysing your dish',
+    noteBoth:'📸 + 🏷️ Combining photo and ingredients gives the most accurate recipe.',notePhoto:'📸 Photo only: AI will estimate. Add info for better results.',
+    noteIng:'🏷️ Ingredients only: the more details, the better.',noteRest:'🍽️ Restaurant mode: type the dish name or describe what you ate.',
+    waText:(r)=>`🍽️ *${r.naam}* via Cheffify\n\n⏱️ ${r.bereidingstijd} | 👥 ${r.porties} serv. | 🔥 ${r.voedingswaarden_per_portie?.kcal||'?'} kcal\n\n🛒 *Ingredients:*\n${r.ingredienten.map(i=>`• ${i.naam}: ${i.hoeveelheid}`).join('\n')}\n\n👨‍🍳 *Preparation:*\n${r.stappen.map((s,i)=>`${i+1}. ${s}`).join('\n')}\n\n💡 ${r.tip||''}\n\n_Made with Cheffify_`,
+    copied:'✓ Copied!',saved:'✅ Added to recipe book!',saveDone:'✅ Saved!',
+    errMsg:'Something went wrong.',errInput:'Add at least a photo or ingredients!',
+    emptyBook:'No recipes yet. Scan your first dish!',
+    scoreTitle:'Rate this recipe',noResultsTitle:'No recipes found',noResultsSub:'Try a different search term or filter',
+    rateBtn:'⭐ Rate',deleteBtn:'🗑️ Delete',openBtn:'📖 Open',
+    statsRecipes:'Recipes',statsAvgScore:'Avg. score',statsAvgKcal:'Avg. kcal',
+    allIngrLabel:'All ingredients',showMore:'+ more',showLess:'Less',
+  }
+};
+const langs=['nl','fr','en'];
+function cycleLang(){lang=langs[(langs.indexOf(lang)+1)%langs.length];document.getElementById('lang-display').textContent=lang.toUpperCase();applyTranslations();}
+function t(k){return T[lang][k]||T.nl[k]||k;}
+function applyTranslations(){
+  const L=T[lang];
+  const s=(id,v)=>{const e=document.getElementById(id);if(e&&v!==undefined)e.textContent=v;};
+  const p=(id,v)=>{const e=document.getElementById(id);if(e&&v!==undefined)e.placeholder=v;};
+  s('hero-sub',L.heroSub);s('lbl-kies',L.kiesModus);
+  s('mc-both-t',L.mcBothT);s('mc-both-s',L.mcBothS);s('mc-both-b',L.mcBothB);
+  s('mc-photo-t',L.mcPhotoT);s('mc-photo-s',L.mcPhotoS);
+  s('mc-ing-t',L.mcIngT);s('mc-ing-s',L.mcIngS);
+  s('mc-rest-t',L.mcRestT);s('mc-rest-s',L.mcRestS);
+  s('btn-start',L.btnStart);s('btn-book',L.btnBook);
+  s('lbl-step1',L.lbl1);s('lbl-step2',L.lbl2);s('lbl-extra',L.lblExtra);
+  s('uz-dish-t',L.uzDishT);s('uz-dish-s',L.uzDishS);s('uz-ing-t',L.uzIngT);s('uz-ing-s',L.uzIngS);
+  s('tag-hint-txt',L.tagHint);
+  s('btn-gen',L.btnGen);s('btn-back',L.btnBack);s('btn-save',L.btnSave);s('btn-new',L.btnNew);
+  s('nl-home',L.nlHome);s('nl-scan',L.nlScan);s('nl-book',L.nlBook);
+  s('load-title',L.loadTitle);s('load-sub',L.loadSub);
+  updateModeNotice();
+}
+
+// ════════════════════════════
+//  MODE + NAV
+// ════════════════════════════
+function setMode(m){
+  currentMode=m;
+  ['both','photo','ing','rest'].forEach(x=>document.getElementById('mc-'+x)?.classList.remove('sel'));
+  const map={both:'mc-both',photo:'mc-photo',ingredients:'mc-ing',restaurant:'mc-rest'};
+  document.getElementById(map[m])?.classList.add('sel');
+}
+function updateModeNotice(){
+  const notes={both:t('noteBoth'),photo:t('notePhoto'),ingredients:t('noteIng'),restaurant:t('noteRest')};
+  document.getElementById('mode-notice').textContent=notes[currentMode]||notes.both;
+}
+function updateUploadUI(){
+  const ph=document.getElementById('photo-block'),ing=document.getElementById('ing-block');
+  if(currentMode==='photo'){ph.style.display='block';ing.style.display='none';}
+  else if(currentMode==='ingredients'){ph.style.display='none';ing.style.display='block';}
+  else{ph.style.display='block';ing.style.display='block';}
+  updateModeNotice();updateProgress(1);
+}
+function showScreen(name){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById('screen-loading').style.display='none';
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const el=document.getElementById('screen-'+name);if(el)el.classList.add('active');
+  const nav=document.getElementById('nav-'+name);if(nav)nav.classList.add('active');
+  document.getElementById('app').scrollTop=0;
+  if(name==='book'){renderBookFilters();renderBook();}
+  if(name==='recipe')document.getElementById('nav-recipe').style.display='flex';
+  else document.getElementById('nav-recipe').style.display='none';
+}
+function startScan(){updateUploadUI();showScreen('upload');document.getElementById('nav-upload').classList.add('active');}
+function updateProgress(s){[1,2,3].forEach(i=>document.getElementById('ps'+i).className='prog-step'+(i<=s?' done':''));}
+
+// ════════════════════════════
+//  IMAGES + TAGS
+// ════════════════════════════
+function handleImg(input,previewId,type){
+  const file=input.files[0];if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const prev=document.getElementById(previewId);prev.src=e.target.result;prev.style.display='block';
+    const b64=e.target.result.split(',')[1];
+    if(type==='dish')dishB64=b64;else ingB64=b64;
+    updateProgress(type==='dish'?2:3);
+  };
+  reader.readAsDataURL(file);
+}
+function switchIngTab(tab){
+  currentIngTab=tab;
+  ['photo','manual','text'].forEach(t2=>{
+    document.getElementById('ing-tab-'+t2).style.display=t2===tab?'block':'none';
+    const btn=document.getElementById('tab-'+t2+'-btn');
+    if(btn)btn.className='btn btn-sm '+(t2===tab?'btn-green':'btn-ghost');
+  });
+}
+function handleTagKey(e){
+  if(e.key==='Enter'||e.key===','){
+    e.preventDefault();const val=e.target.value.trim().replace(/,$/,'');
+    if(val){addTag(val);e.target.value='';}
+  }
+}
+function addTag(val){
+  tags.push(val);
+  const area=document.getElementById('tag-area'),input=document.getElementById('tag-input');
+  const tag=document.createElement('div');tag.className='ing-tag';
+  tag.dataset.val=val;
+  tag.innerHTML=`${val}<button onclick="removeTag(this)">×</button>`;
+  area.insertBefore(tag,input);
+}
+function removeTag(btn){const tag=btn.parentElement;tags=tags.filter(t2=>t2!==tag.dataset.val);tag.remove();}
+function getIngredientsInput(){
+  if(currentIngTab==='manual')return tags.join(', ');
+  if(currentIngTab==='text')return document.getElementById('ing-textarea').value.trim();
+  return '';
+}
+
+// ════════════════════════════
+//  GENERATE
+// ════════════════════════════
+const loadMsgs={
+  nl:['AI analyseert je gerecht…','Ingrediënten verwerken…','Voedingswaarden berekenen…','Gezondere tips zoeken…','Bijna klaar! 🎉'],
+  fr:["L'IA analyse votre plat…","Traitement des ingrédients…","Calcul des valeurs nutritives…","Recherche de conseils santé…","Presque prêt! 🎉"],
+  en:['Analysing your dish…','Processing ingredients…','Calculating nutritional values…','Finding healthier tips…','Almost done! 🎉']
+};
+async function generateRecipe(){
+  const textIng=getIngredientsInput();
+  const extra=document.getElementById('extra-text').value.trim();
+  if(!dishB64&&!ingB64&&!textIng&&currentMode!=='restaurant'){alert(t('errInput'));return;}
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const loadEl=document.getElementById('screen-loading');loadEl.style.display='block';updateProgress(3);
+  let mi=0;const msgs=loadMsgs[lang]||loadMsgs.nl;const subEl=document.getElementById('load-sub');
+  const iv=setInterval(()=>{subEl.textContent=msgs[Math.min(mi++,msgs.length-1)];},2000);
+  try{
+    const parts=[];
+    if(dishB64){parts.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:dishB64}});parts.push({type:'text',text:'This is a photo of the dish.'});}
+    if(ingB64){parts.push({type:'image',source:{type:'base64',media_type:'image/jpeg',data:ingB64}});parts.push({type:'text',text:'This is a photo of the ingredient list on the packaging.'});}
+    const langMap={nl:'Dutch (Nederlands)',fr:'French (Français)',en:'English'};
+    const prompt=`You are a professional chef and nutritionist. Generate a complete home recipe.
+${textIng?`\nIngredient list: ${textIng}`:''}
+${extra?`\nExtra context: ${extra}`:''}
+${currentMode==='restaurant'?'\nRESTAURANT MODE: recreate a restaurant dish for home cooking.':''}
+IMPORTANT: Respond ENTIRELY in ${langMap[lang]||'Dutch'}.
+Respond ONLY with valid JSON (no markdown, no backticks):
+{
+  "naam": "Dish name",
+  "beschrijving": "Short appealing description",
+  "bereidingstijd": "XX minuten",
+  "porties": 2,
+  "moeilijkheid": "Makkelijk",
+  "ingredienten": [{"naam":"name","hoeveelheid":"X gram","alternatief":"healthier swap or null"}],
+  "stappen": ["Step 1..."],
+  "tip": "One chef tip",
+  "gezondheid_tips": ["tip1","tip2","tip3"],
+  "voedingswaarden_per_portie": {"kcal":520,"eiwitten_g":32,"koolhydraten_g":58,"vetten_g":18,"vezels_g":4,"suiker_g":5,"zout_g":1.2}
+}`;
+    parts.push({type:'text',text:prompt});
+    const apiKey=localStorage.getItem('cheffify_apikey')||'';
+    if(!apiKey){clearInterval(iv);loadEl.style.display='none';showScreen('settings');alert('Voer eerst je Anthropic API-sleutel in via Instellingen (⚙️).');return;}
+    console.log('Cheffify: calling API via proxy...');
+    const proxyUrl = localStorage.getItem('cheffify_proxy') || 'https://JOUW-NAAM.vercel.app/api/recipe';
+    const res=await fetch(proxyUrl,{method:'POST',headers:{'Content-Type':'application/json','x-api-key':apiKey},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1500,messages:[{role:'user',content:parts}]})});
+    console.log('Cheffify: response status',res.status);
+    if(!res.ok){
+      const errBody=await res.text();
+      console.error('API error body:',errBody);
+      let userMsg='API fout '+res.status+': ';
+      if(res.status===401)userMsg+='Ongeldige API-sleutel. Controleer je sleutel in Instellingen.';
+      else if(res.status===429)userMsg+='Te veel aanvragen. Wacht even en probeer opnieuw.';
+      else if(res.status===400)userMsg+='Ongeldige aanvraag. Probeer zonder foto of met minder data.';
+      else if(res.status===529||res.status===503)userMsg+='API tijdelijk overbelast. Probeer over 30 seconden opnieuw.';
+      else userMsg+=errBody.substring(0,200);
+      clearInterval(iv);loadEl.style.display='none';alert(userMsg);showScreen('upload');return;
+    }
+    const data=await res.json();
+    console.log('Cheffify: got response',data);
+    const raw=(data.content||[]).map(i=>i.text||'').join('');
+    let recipe;try{recipe=JSON.parse(raw.replace(/```json|```/g,'').trim());}catch(pe){console.warn('JSON parse failed, using fallback',pe);recipe=getFallback();}
+    clearInterval(iv);
+    currentRecipe=recipe;
+    basePortions=typeof recipe.porties==='number'?recipe.porties:2;
+    currentPortions=basePortions;
+    renderRecipe(recipe,currentPortions);
+    loadEl.style.display='none';
+    showScreen('recipe');
+  }catch(e){
+    clearInterval(iv);loadEl.style.display='none';
+    const msg='❌ Fout: '+e.message+'\n\nControleer:\n1. Is je API-sleutel correct ingesteld?\n2. Heeft je Anthropic account tegoed?\nOpen de browser console (F12) voor details.';
+    alert(msg);showScreen('upload');
+    console.error('Cheffify error:',e);
+  }
+}
+
+// ════════════════════════════
+//  RENDER RECIPE
+// ════════════════════════════
+function r1(v){return Math.round(v*10)/10;}
+function renderRecipe(r,portions){
+  const scale=portions/(basePortions||2);
+  const nv=r.voedingswaarden_per_portie||{};
+  const tot=(nv.eiwitten_g||0)+(nv.koolhydraten_g||0)+(nv.vetten_g||0);
+  const pP=tot?Math.round((nv.eiwitten_g||0)/tot*100):33;
+  const kP=tot?Math.round((nv.koolhydraten_g||0)/tot*100):34;
+  const vP=tot?Math.round((nv.vetten_g||0)/tot*100):33;
+  const L=T[lang];
+  const score=r.score;
+  document.getElementById('recipe-content').innerHTML=`
+  <div class="recipe-hero">
+    <h2>${r.naam}</h2>
+    <p>${r.beschrijving}</p>
+    <div class="chips">
+      <div class="chip">⏱️ ${r.bereidingstijd}</div>
+      <div class="chip">📊 ${r.moeilijkheid}</div>
+      ${nv.kcal?`<div class="chip green">🔥 ${Math.round(nv.kcal*scale)} kcal</div>`:''}
+      ${score?`<div class="chip amber">⭐ ${score}/10</div>`:''}
+    </div>
+  </div>
+  <div class="share-row">
+    <button class="share-btn btn-wa" onclick="shareWhatsApp()"><svg width="17" height="17" viewBox="0 0 24 24" fill="white"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>WhatsApp</button>
+    <button class="share-btn btn-copy" onclick="copyRecipe()" id="copy-btn">📋 Kopieer</button>
+  </div>
+  <div class="portion-card">
+    <label>🍽️ ${L.lblPortion}</label>
+    <button class="port-btn" onclick="changePortion(-1)">−</button>
+    <input type="range" class="port-slider" min="1" max="10" value="${portions}" oninput="sliderChange(this.value)" id="port-slider">
+    <span class="port-num" id="port-num">${portions}</span>
+    <button class="port-btn" onclick="changePortion(1)">+</button>
+  </div>
+  ${nv.kcal?`<div class="nutr-card">
+    <h3>🔥 ${L.lblNutr}</h3>
+    <div class="kcal-big"><div class="kcal-num" id="nv-kcal">${Math.round((nv.kcal||0)*scale)}</div><div class="kcal-lbl">kcal</div></div>
+    <div class="nutr-grid">
+      <div class="ng-box"><span class="ng-val" id="nv-prot">${r1((nv.eiwitten_g||0)*scale)}g</span><span class="ng-lbl">Eiwitten</span></div>
+      <div class="ng-box"><span class="ng-val" id="nv-kh">${r1((nv.koolhydraten_g||0)*scale)}g</span><span class="ng-lbl">Koolhyd.</span></div>
+      <div class="ng-box"><span class="ng-val" id="nv-vet">${r1((nv.vetten_g||0)*scale)}g</span><span class="ng-lbl">Vetten</span></div>
+      <div class="ng-box"><span class="ng-val" id="nv-vez">${r1((nv.vezels_g||0)*scale)}g</span><span class="ng-lbl">Vezels</span></div>
+      <div class="ng-box"><span class="ng-val" id="nv-sui">${r1((nv.suiker_g||0)*scale)}g</span><span class="ng-lbl">Suiker</span></div>
+      <div class="ng-box"><span class="ng-val" id="nv-zout">${r1((nv.zout_g||0)*scale)}g</span><span class="ng-lbl">Zout</span></div>
+    </div>
+    <div class="macro-bars">
+      <div class="mb-row"><span class="mb-lbl">🥩 Eiwitten</span><div class="mb-track"><div class="mb-fill" style="width:${pP}%;background:#a8e063"></div></div><span class="mb-pct">${pP}%</span></div>
+      <div class="mb-row"><span class="mb-lbl">🌾 Koolhyd.</span><div class="mb-track"><div class="mb-fill" style="width:${kP}%;background:#f5a623"></div></div><span class="mb-pct">${kP}%</span></div>
+      <div class="mb-row"><span class="mb-lbl">🧈 Vetten</span><div class="mb-track"><div class="mb-fill" style="width:${vP}%;background:#e05252"></div></div><span class="mb-pct">${vP}%</span></div>
+    </div>
+  </div>`:''}
+  <div class="sec-card">
+    <h3>🛒 ${L.lbl3} <span style="color:var(--text3);font-size:.78rem;font-weight:300;font-family:'Outfit',sans-serif">(${portions} ${portions===1?'portie':'porties'})</span></h3>
+    ${r.ingredienten.map(i=>`<div class="ing-row"><div><div class="ing-name">${i.naam}</div>${i.alternatief?`<div class="ing-alt">💚 ${i.alternatief}</div>`:''}</div><div class="ing-qty">${i.hoeveelheid}</div></div>`).join('')}
+  </div>
+  <div class="sec-card">
+    <h3>👨‍🍳 ${L.lbl4}</h3>
+    ${r.stappen.map((s,i)=>`<div class="step-row"><div class="step-num">${i+1}</div><div class="step-desc">${s}</div></div>`).join('')}
+  </div>
+  ${r.tip?`<div class="tip-box"><strong>💡 ${L.lblTip}</strong>${r.tip}</div>`:''}
+  ${r.gezondheid_tips?.length?`<div class="sec-card" style="border-color:rgba(168,224,99,.2);">
+    <h3>💚 ${L.lblAlts}</h3>
+    ${r.gezondheid_tips.map(tip=>`<div class="step-row"><div class="step-num" style="background:rgba(168,224,99,.08);color:var(--accent2)">✓</div><div class="step-desc">${tip}</div></div>`).join('')}
+  </div>`:''}
+  `;
+}
+function changePortion(d){if(!currentRecipe)return;currentPortions=Math.max(1,Math.min(10,currentPortions+d));document.getElementById('port-num').textContent=currentPortions;const sl=document.getElementById('port-slider');if(sl)sl.value=currentPortions;updateNutritionDisplay();}
+function sliderChange(v){currentPortions=parseInt(v);document.getElementById('port-num').textContent=currentPortions;updateNutritionDisplay();}
+function updateNutritionDisplay(){
+  const nv=currentRecipe?.voedingswaarden_per_portie||{};const sc=currentPortions/(basePortions||2);
+  const u=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v;};
+  u('nv-kcal',Math.round((nv.kcal||0)*sc));u('nv-prot',r1((nv.eiwitten_g||0)*sc)+'g');
+  u('nv-kh',r1((nv.koolhydraten_g||0)*sc)+'g');u('nv-vet',r1((nv.vetten_g||0)*sc)+'g');
+  u('nv-vez',r1((nv.vezels_g||0)*sc)+'g');u('nv-sui',r1((nv.suiker_g||0)*sc)+'g');u('nv-zout',r1((nv.zout_g||0)*sc)+'g');
+}
+
+// ════════════════════════════
+//  SHARE
+// ════════════════════════════
+function shareWhatsApp(){if(!currentRecipe)return;window.open('https://wa.me/?text='+encodeURIComponent(T[lang].waText(currentRecipe)),'_blank');}
+function copyRecipe(){
+  if(!currentRecipe)return;
+  navigator.clipboard.writeText(T[lang].waText(currentRecipe)).then(()=>{
+    const btn=document.getElementById('copy-btn');const prev=btn.textContent;btn.textContent=t('copied');setTimeout(()=>btn.textContent=prev,2000);
+  });
+}
+
+// ════════════════════════════
+//  BOOK — SAVE
+// ════════════════════════════
+function getBook(){return JSON.parse(localStorage.getItem(STORE)||'[]');}
+function setBook(b){localStorage.setItem(STORE,JSON.stringify(b));}
+
+function saveToBook(){
+  if(!currentRecipe)return;
+  const book=getBook();
+  // check duplicate by name
+  const exists=book.findIndex(r=>r.naam===currentRecipe.naam);
+  const entry={...currentRecipe,datum:new Date().toLocaleDateString('nl-BE'),datumSort:Date.now(),lang,score:null};
+  if(exists>=0)book[exists]=entry;else book.unshift(entry);
+  setBook(book);
+  const btn=document.getElementById('btn-save');
+  btn.textContent=t('saveDone');setTimeout(()=>btn.textContent=t('btnSave'),2500);
+}
+
+// ════════════════════════════
+//  BOOK — FILTER CLOUD
+// ════════════════════════════
+function getAllIngredients(){
+  const book=getBook();const freq={};
+  book.forEach(r=>{
+    (r.ingredienten||[]).forEach(i=>{
+      const name=i.naam?.toLowerCase().trim();
+      if(name&&name.length>2&&name.length<30){freq[name]=(freq[name]||0)+1;}
+    });
+  });
+  return Object.entries(freq).sort((a,b)=>b[1]-a[1]).map(e=>e[0]);
+}
+
+function renderBookFilters(){
+  const all=getAllIngredients();
+  const cloud=document.getElementById('filter-cloud');
+  const MAX_SHOWN=14;
+  const shown=filterCloudExpanded?all:all.slice(0,MAX_SHOWN);
+  cloud.innerHTML='';
+  if(!all.length)return;
+  shown.forEach(ing=>{
+    const chip=document.createElement('div');
+    chip.className='filter-chip'+(activeFilters.has(ing)?' active':'');
+    chip.textContent=ing;
+    chip.onclick=()=>toggleFilter(ing);
+    cloud.appendChild(chip);
+  });
+  if(all.length>MAX_SHOWN){
+    const more=document.createElement('div');
+    more.className='filter-chip show-more';
+    more.textContent=filterCloudExpanded?t('showLess'):`${t('showMore')} (${all.length-MAX_SHOWN})`;
+    more.onclick=()=>{filterCloudExpanded=!filterCloudExpanded;renderBookFilters();};
+    cloud.appendChild(more);
+  }
+  if(activeFilters.size){
+    const clear=document.createElement('div');
+    clear.className='filter-chip';clear.style.color='var(--red)';clear.style.borderColor='rgba(224,82,82,.3)';
+    clear.textContent='✕ Wis filters';clear.onclick=()=>{activeFilters.clear();renderBookFilters();renderBook();};
+    cloud.appendChild(clear);
+  }
+}
+
+function toggleFilter(ing){
+  if(activeFilters.has(ing))activeFilters.delete(ing);else activeFilters.add(ing);
+  renderBookFilters();renderBook();
+}
+
+// ════════════════════════════
+//  BOOK — SEARCH + SORT + RENDER
+// ════════════════════════════
+let currentSort2='datum';
+function setSort(s){
+  currentSort2=s;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  document.getElementById('sort-'+s)?.classList.add('active');
+  renderBook();
+}
+
+function clearSearch(){document.getElementById('book-search').value='';document.getElementById('search-clear').style.display='none';renderBook();}
+
+function filterBook(){
+  const q=document.getElementById('book-search').value;
+  document.getElementById('search-clear').style.display=q?'block':'none';
+  renderBook();
+}
+
+function renderBookStats(filteredCount,totalCount){
+  const book=getBook();
+  const scored=book.filter(r=>r.score);
+  const avgScore=scored.length?Math.round(scored.reduce((a,r)=>a+r.score,0)/scored.length*10)/10:null;
+  const withKcal=book.filter(r=>r.voedingswaarden_per_portie?.kcal);
+  const avgKcal=withKcal.length?Math.round(withKcal.reduce((a,r)=>a+(r.voedingswaarden_per_portie.kcal||0),0)/withKcal.length):null;
+  document.getElementById('book-stats').innerHTML=`
+    <div class="stat-pill"><span class="stat-num">${filteredCount}</span><span class="stat-lbl">${filteredCount<totalCount?'Gevonden':t('statsRecipes')}</span></div>
+    ${avgScore?`<div class="stat-pill"><span class="stat-num">⭐ ${avgScore}</span><span class="stat-lbl">${t('statsAvgScore')}</span></div>`:''}
+    ${avgKcal?`<div class="stat-pill"><span class="stat-num">${avgKcal}</span><span class="stat-lbl">${t('statsAvgKcal')}</span></div>`:''}
+  `;
+}
+
+function renderBook(){
+  let book=getBook();
+  const q=(document.getElementById('book-search')?.value||'').toLowerCase().trim();
+  // text search
+  if(q){book=book.filter(r=>{
+    const name=(r.naam||'').toLowerCase();
+    const desc=(r.beschrijving||'').toLowerCase();
+    const ings=(r.ingredienten||[]).map(i=>i.naam||'').join(' ').toLowerCase();
+    return name.includes(q)||desc.includes(q)||ings.includes(q);
+  });}
+  // ingredient filter
+  if(activeFilters.size){book=book.filter(r=>{
+    const ings=(r.ingredienten||[]).map(i=>(i.naam||'').toLowerCase());
+    return [...activeFilters].every(f=>ings.some(i=>i.includes(f)));
+  });}
+  renderBookStats(book.length,getBook().length);
+  // sort
+  book=[...book];
+  if(currentSort2==='score')book.sort((a,b)=>(b.score||0)-(a.score||0));
+  else if(currentSort2==='kcal')book.sort((a,b)=>(a.voedingswaarden_per_portie?.kcal||0)-(b.voedingswaarden_per_portie?.kcal||0));
+  else if(currentSort2==='naam')book.sort((a,b)=>(a.naam||'').localeCompare(b.naam||''));
+  else book.sort((a,b)=>(b.datumSort||0)-(a.datumSort||0));
+
+  const el=document.getElementById('book-list');
+  if(!book.length){
+    el.innerHTML=`<div class="no-results"><div class="nr-icon">🔍</div><strong>${t('noResultsTitle')}</strong><p style="margin-top:6px;font-size:.84rem;">${t('noResultsSub')}</p></div>`;
+    return;
+  }
+  el.innerHTML=book.map((r,i)=>{
+    const origIdx=getBook().findIndex(x=>x.datumSort===r.datumSort&&x.naam===r.naam);
+    const stars=renderMiniStars(r.score);
+    const matchedIngs=q||activeFilters.size?(r.ingredienten||[]).filter(i=>{
+      const n=(i.naam||'').toLowerCase();
+      return (q&&n.includes(q))||[...activeFilters].some(f=>n.includes(f));
+    }):[];
+    const allIngs=(r.ingredienten||[]).slice(0,6).map(i=>i.naam);
+    return `<div class="book-card">
+      <div class="book-card-top">
+        <div class="book-thumb">🍽️</div>
+        <div class="book-info">
+          <div class="book-name">${r.naam}</div>
+          <div class="book-meta">
+            <span>⏱️ ${r.bereidingstijd||'—'}</span>
+            ${r.voedingswaarden_per_portie?.kcal?`<span>🔥 ${r.voedingswaarden_per_portie.kcal} kcal</span>`:''}
+            <span>📅 ${r.datum||'—'}</span>
+          </div>
+          <div class="book-score">${stars}<span class="score-badge">${r.score?r.score+'/10':'Nog niet beoordeeld'}</span></div>
+        </div>
+      </div>
+      <div class="book-ing-tags">
+        ${allIngs.map(n=>{const m=matchedIngs.some(mi=>mi.naam===n||(n&&mi.naam&&n.toLowerCase()===mi.naam.toLowerCase()));return`<div class="book-ing-tag${m?' match':''}">${n}</div>`;}).join('')}
+        ${(r.ingredienten||[]).length>6?`<div class="book-ing-tag">+${(r.ingredienten||[]).length-6}</div>`:''}
+      </div>
+      <div style="display:flex;gap:7px;margin-top:10px;">
+        <button class="btn btn-sm btn-green" style="flex:2;" onclick="openFromBook(${origIdx})">📖 ${t('openBtn')}</button>
+        <button class="btn btn-sm btn-outline" style="flex:1;margin-top:0;" onclick="openScoreModal(${origIdx})">⭐ ${t('rateBtn')}</button>
+        <button class="btn btn-sm btn-danger" style="flex:1;" onclick="deleteFromBook(${origIdx})">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderMiniStars(score){
+  if(!score)return`<span class="mini-stars" style="opacity:.3">☆☆☆☆☆☆☆☆☆☆</span>`;
+  const full=Math.floor(score);const half=score%1>=0.5?1:0;const empty=10-full-half;
+  return`<span class="mini-stars">${'⭐'.repeat(full)}${'✨'.repeat(half)}${'☆'.repeat(empty)}</span>`;
+}
+
+function openFromBook(idx){
+  const book=getBook();if(idx<0||idx>=book.length)return;
+  currentRecipe=book[idx];
+  basePortions=typeof currentRecipe.porties==='number'?currentRecipe.porties:2;
+  currentPortions=basePortions;
+  renderRecipe(currentRecipe,currentPortions);
+  showScreen('recipe');
+}
+
+function deleteFromBook(idx){
+  const book=getBook();book.splice(idx,1);setBook(book);
+  renderBookFilters();renderBook();
+}
+
+// ════════════════════════════
+//  SCORE MODAL
+// ════════════════════════════
+function openScoreModal(idx){
+  scoreModalIdx=idx;
+  const book=getBook();const r=book[idx];
+  document.getElementById('score-modal-title').textContent=r.naam;
+  const current=r.score||7;
+  document.getElementById('modal-score-slider').value=current;
+  updateScorePreview(current);
+  document.getElementById('score-modal').classList.remove('hidden');
+}
+function closeScoreModal(){document.getElementById('score-modal').classList.add('hidden');scoreModalIdx=-1;}
+function updateScorePreview(v){
+  const val=parseFloat(v);
+  document.getElementById('modal-score-val').textContent=val.toFixed(1);
+  const full=Math.floor(val);const half=val%1>=0.5?1:0;const empty=10-full-half;
+  document.getElementById('modal-stars').textContent='⭐'.repeat(full)+'✨'.repeat(half)+'☆'.repeat(empty);
+}
+function confirmScore(){
+  if(scoreModalIdx<0)return;
+  const val=parseFloat(document.getElementById('modal-score-slider').value);
+  const book=getBook();book[scoreModalIdx].score=val;setBook(book);
+  closeScoreModal();renderBook();
+  // if current open recipe is this one, re-render
+  if(currentRecipe&&currentRecipe.naam===book[scoreModalIdx].naam){
+    currentRecipe.score=val;renderRecipe(currentRecipe,currentPortions);
+  }
+}
+// close modal on backdrop click
+document.getElementById('score-modal').addEventListener('click',function(e){if(e.target===this)closeScoreModal();});
+
+// ════════════════════════════
+//  FALLBACK
+// ════════════════════════════
+function getFallback(){
+  return{naam:'Rigatoni met tomatenroomsaus, spinazie en kip',beschrijving:'Een romige pasta met sappige kip, verse spinazie en een rijke tomatensaus.',bereidingstijd:'35 minuten',porties:2,moeilijkheid:'Makkelijk',
+    ingredienten:[{naam:'Rigatoni',hoeveelheid:'250g',alternatief:'Volkoren rigatoni'},{naam:'Kipfilet',hoeveelheid:'200g',alternatief:null},{naam:'Verse spinazie',hoeveelheid:'100g',alternatief:null},{naam:'Kookroom',hoeveelheid:'150ml',alternatief:'Haverroom'},{naam:'Tomatenpuree',hoeveelheid:'2 el',alternatief:null},{naam:'Knoflook',hoeveelheid:'2 teentjes',alternatief:null},{naam:'Cashewnoten',hoeveelheid:'30g',alternatief:null},{naam:'Geraspte kaas',hoeveelheid:'40g',alternatief:'Nutritional yeast'}],
+    stappen:['Kook rigatoni al dente. Bewaar kookwater.','Bak kip goudbruin in olijfolie. Zet apart.','Fruit knoflook. Voeg tomatenpuree toe, 2 min bakken.','Room toevoegen, 3 min inkoken. Spinazie laten slinken.','Meng pasta en kip. Verdun met kookwater.','Serveer met kaas en cashewnoten.'],
+    tip:'Rooster de cashewnoten droog voor extra diepte.',gezondheid_tips:['Gebruik volkoren pasta voor meer vezels.','Vervang room door plantaardige variant.','Voeg extra groenten toe zoals courgette.'],
+    voedingswaarden_per_portie:{kcal:680,eiwitten_g:38,koolhydraten_g:62,vetten_g:28,vezels_g:5,suiker_g:6,zout_g:1.4}};
+}
+
+
+// ════════════════════════════
+//  API KEY
+// ════════════════════════════
+function saveApiKey(){
+  const val=document.getElementById('api-key-input').value.trim();
+  if(!val.startsWith('sk-')){document.getElementById('key-status').style.color='var(--red)';document.getElementById('key-status').textContent='⚠️ Sleutel lijkt niet geldig (moet beginnen met sk-)';return;}
+  localStorage.setItem('cheffify_apikey',val);
+  const proxyVal=document.getElementById('proxy-url-input')?.value.trim();
+  if(proxyVal&&proxyVal.startsWith('https://')){
+    localStorage.setItem('cheffify_proxy',proxyVal);
+    document.getElementById('proxy-status').textContent='✅ Proxy URL opgeslagen!';
+  } else if(proxyVal){
+    document.getElementById('proxy-status').style.color='var(--red)';
+    document.getElementById('proxy-status').textContent='⚠️ URL moet beginnen met https://';
+    return;
+  }
+  document.getElementById('key-status').style.color='var(--accent)';
+  document.getElementById('key-status').textContent='✅ Instellingen opgeslagen!';
+  setTimeout(()=>showScreen('home'),1500);
+}
+function toggleKeyVisibility(){
+  const inp=document.getElementById('api-key-input');
+  inp.type=inp.type==='password'?'text':'password';
+}
+function checkApiKeyOnStart(){
+  const key=localStorage.getItem('cheffify_apikey')||'';
+  const proxy=localStorage.getItem('cheffify_proxy')||'';
+  if(key)document.getElementById('api-key-input').value=key;
+  if(proxy){const pi=document.getElementById('proxy-url-input');if(pi)pi.value=proxy;}
+  const ready=key&&proxy;
+  const indicator=document.createElement('div');
+  indicator.style.cssText='width:8px;height:8px;border-radius:50%;background:'+(ready?'var(--accent)':'var(--red)')+';flex-shrink:0;cursor:pointer;';
+  indicator.title=ready?'Klaar om te koken!':'Instellingen vereist — tik om in te stellen';
+  indicator.onclick=()=>showScreen('settings');
+  document.querySelector('.topbar-right')?.prepend(indicator);
+  if(!ready){
+    // show a banner if not configured yet
+    const banner=document.createElement('div');
+    banner.style.cssText='background:rgba(224,82,82,.1);border:1px solid rgba(224,82,82,.25);border-radius:var(--rm);padding:11px 14px;font-size:.82rem;color:var(--red);margin:0 16px 14px;line-height:1.5;cursor:pointer;';
+    banner.innerHTML='⚙️ <strong>Nog niet ingesteld:</strong> Voer je API-sleutel en Vercel proxy-URL in om te beginnen.';
+    banner.onclick=()=>showScreen('settings');
+    document.getElementById('screen-home')?.prepend(banner);
+  }
+}
+
+// ════════════════════════════
+//  INIT
+// ════════════════════════════
+applyTranslations();switchIngTab('photo');checkApiKeyOnStart();
+</script>
+</body>
+</html>
